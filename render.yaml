@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: hijau-landscape-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: VERIFY_TOKEN
+        generateValue: true
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: PHONE_NUMBER_ID
+        sync: false
