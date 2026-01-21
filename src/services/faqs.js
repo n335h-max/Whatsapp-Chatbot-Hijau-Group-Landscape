@@ -25,7 +25,9 @@ const faqs = [
 ✅ Pemasangan Rumput Semula Jadi & Tiruan
 ✅ Pembinaan Kolam Air (Water Feature)
 ✅ Pembinaan Tiny House 
-✅ Perkhidmatan Pemotongan Pokok & Rumput`,
+✅ Perkhidmatan Pemotongan Pokok & Rumput
+✅ Exterior design
+✅ Awning ( Rumah & Premis)`,
         answer_en: `✅ Landscape Consultation
 ✅ 3D & CAD Landscape Drawings
 ✅ Landscape Ideas – Hardscape & Softscape
@@ -34,7 +36,9 @@ const faqs = [
 ✅ Natural & Artificial Grass Installation
 ✅ Water Feature Construction
 ✅ Tiny House Construction
-✅ Tree Cutting & Grass Cutting Services`
+✅ Tree Cutting & Grass Cutting Services
+✅ Exterior Design
+✅ Awning (Residential & Commercial)`
     },
     {
         topic: 'design',
