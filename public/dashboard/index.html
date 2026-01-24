@@ -193,6 +193,35 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         .btn-pause {
@@ -202,15 +231,25 @@
         
         .btn-pause:hover {
             background: #f56565;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(252, 129, 129, 0.3);
         }
         
         .btn-resume {
             background: #68d391;
             color: white;
+            animation: pulse-green 2s infinite;
         }
         
         .btn-resume:hover {
             background: #48bb78;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(104, 211, 145, 0.3);
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(104, 211, 145, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(104, 211, 145, 0); }
         }
         
         .btn-notes {
@@ -220,6 +259,44 @@
         
         .btn-notes:hover {
             background: #ed8936;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(246, 173, 85, 0.3);
+        }
+        
+        .bot-paused-banner {
+            background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+            color: white;
+            padding: 12px 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .bot-paused-banner.show {
+            display: flex;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .bot-paused-banner .icon {
+            font-size: 20px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
         }
         
         .messages-container {
@@ -426,6 +503,11 @@
             </div>
             
             <div class="chat-panel">
+                <div class="bot-paused-banner" id="paused-banner">
+                    <span class="icon">⏸️</span>
+                    <span>Bot is PAUSED for this customer - Manual mode active</span>
+                </div>
+                
                 <div class="chat-header">
                     <div class="chat-info">
                         <h2 id="customer-name">Select a conversation</h2>
@@ -433,8 +515,8 @@
                     </div>
                     <div class="bot-controls" id="bot-controls" style="display: none;">
                         <button class="btn btn-notes" onclick="openNotes()">📝 Notes</button>
-                        <button class="btn btn-pause" onclick="pauseBot()">⏸️ Pause Bot</button>
-                        <button class="btn btn-resume" onclick="resumeBot()" style="display: none;">▶️ Resume Bot</button>
+                        <button class="btn btn-pause" id="btn-pause" onclick="pauseBot()">⏸️ Pause Bot</button>
+                        <button class="btn btn-resume" id="btn-resume" onclick="resumeBot()" style="display: none;">▶️ Resume Bot</button>
                     </div>
                 </div>
                 
@@ -655,22 +737,120 @@
         }
         
         async function pauseBot() {
-            await fetch('/api/dashboard/pause', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: currentCustomer })
-            });
-            alert('Bot paused for this customer');
+            const pauseBtn = document.getElementById('btn-pause');
+            const resumeBtn = document.getElementById('btn-resume');
+            const banner = document.getElementById('paused-banner');
+            
+            // Add loading animation
+            pauseBtn.classList.add('loading');
+            pauseBtn.disabled = true;
+            
+            try {
+                await fetch('/api/dashboard/pause', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentCustomer })
+                });
+                
+                // Success animation
+                pauseBtn.classList.remove('loading');
+                pauseBtn.style.display = 'none';
+                resumeBtn.style.display = 'block';
+                banner.classList.add('show');
+                
+                // Show success message with animation
+                showToast('⏸️ Bot paused - Manual mode activated', 'success');
+            } catch (error) {
+                pauseBtn.classList.remove('loading');
+                pauseBtn.disabled = false;
+                showToast('❌ Failed to pause bot', 'error');
+            }
         }
         
         async function resumeBot() {
-            await fetch('/api/dashboard/resume', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: currentCustomer })
-            });
-            alert('Bot resumed for this customer');
+            const pauseBtn = document.getElementById('btn-pause');
+            const resumeBtn = document.getElementById('btn-resume');
+            const banner = document.getElementById('paused-banner');
+            
+            // Add loading animation
+            resumeBtn.classList.add('loading');
+            resumeBtn.disabled = true;
+            
+            try {
+                await fetch('/api/dashboard/resume', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentCustomer })
+                });
+                
+                // Success animation
+                resumeBtn.classList.remove('loading');
+                resumeBtn.style.display = 'none';
+                pauseBtn.style.display = 'block';
+                pauseBtn.disabled = false;
+                banner.classList.remove('show');
+                
+                // Show success message with animation
+                showToast('▶️ Bot resumed - Automated responses active', 'success');
+            } catch (error) {
+                resumeBtn.classList.remove('loading');
+                resumeBtn.disabled = false;
+                showToast('❌ Failed to resume bot', 'error');
+            }
         }
+        
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#4299e1'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add toast animations to style
+        const toastStyles = document.createElement('style');
+        toastStyles.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(toastStyles);
         
         async function openNotes() {
             if (!currentCustomer) return;
