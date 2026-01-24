@@ -78,7 +78,12 @@ function clearOldContexts() {
 // Clean up old contexts every 30 minutes
 setInterval(clearOldContexts, 30 * 60 * 1000);
 
+function getAllContexts() {
+    return userContexts;
+}
+
 module.exports = {
     getContext,
+    getAllContexts,
     UserContext
 };
