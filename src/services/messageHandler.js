@@ -37,7 +37,7 @@ const handleMessage = async (from, messageBody) => {
     }
 
     // 2. Greeting
-    const greetings = ['hi', 'hello', 'salam', 'hey', 'start'];
+    const greetings = ['hi', 'hai', 'hello', 'salam', 'hey', 'start', 'helo'];
     if (greetings.some(g => lowerCaseMessage.startsWith(g)) || lowerCaseMessage.length < 2) {
         await whatsapp.sendText(from, GREETING_MESSAGE_BILINGUAL);
         return;

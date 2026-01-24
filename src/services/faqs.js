@@ -178,17 +178,13 @@ const findFaq = (message) => {
     const lowerMsg = message.toLowerCase();
 
     for (const faq of faqs) {
-        // Check English keywords first? Or precedence?
-        // Let's just check if any match.
+        // Check if any keyword matches (both English and Malay)
+        const matchesEnglish = faq.keywords_en.some(keyword => lowerMsg.includes(keyword));
+        const matchesMalay = faq.keywords_ms.some(keyword => lowerMsg.includes(keyword));
 
-        // Check English
-        if (faq.keywords_en.some(keyword => lowerMsg.includes(keyword))) {
-            return faq.answer_en;
-        }
-
-        // Check Malay
-        if (faq.keywords_ms.some(keyword => lowerMsg.includes(keyword))) {
-            return faq.answer_ms;
+        if (matchesEnglish || matchesMalay) {
+            // Return bilingual answer (both Malay and English)
+            return `${faq.answer_ms}\n\n${faq.answer_en}`;
         }
     }
     return null;
