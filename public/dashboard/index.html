@@ -470,6 +470,57 @@
     <script>
         let currentCustomer = null;
         let conversations = [];
+        let lastConversationCount = 0;
+        let notificationPermission = 'default';
+        
+        // Create notification sound (using Web Audio API)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playNotificationSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800; // Frequency in Hz
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+        
+        // Request notification permission
+        async function requestNotificationPermission() {
+            if ('Notification' in window) {
+                notificationPermission = await Notification.requestPermission();
+                console.log('Notification permission:', notificationPermission);
+            }
+        }
+        
+        // Show desktop notification
+        function showDesktopNotification(title, body, icon = '🌿') {
+            if (notificationPermission === 'granted') {
+                const notification = new Notification(title, {
+                    body: body,
+                    icon: icon,
+                    badge: icon,
+                    tag: 'whatsapp-bot',
+                    requireInteraction: false
+                });
+                
+                notification.onclick = function() {
+                    window.focus();
+                    notification.close();
+                };
+                
+                // Auto close after 5 seconds
+                setTimeout(() => notification.close(), 5000);
+            }
+        }
         
         function getInitials(name) {
             if (!name || name === 'Unknown') return '?';
@@ -483,7 +534,36 @@
         async function loadConversations() {
             try {
                 const response = await fetch('/api/dashboard/conversations');
-                conversations = await response.json();
+                const newConversations = await response.json();
+                
+                // Check for new messages
+                if (lastConversationCount > 0 && newConversations.length > lastConversationCount) {
+                    const newConv = newConversations[0]; // Most recent
+                    playNotificationSound();
+                    showDesktopNotification(
+                        `New message from ${newConv.name}`,
+                        newConv.lastMessage.substring(0, 100),
+                        '🌿'
+                    );
+                }
+                
+                // Check for unread messages in existing conversations
+                if (lastConversationCount > 0) {
+                    newConversations.forEach(newConv => {
+                        const oldConv = conversations.find(c => c.phone === newConv.phone);
+                        if (oldConv && newConv.unread > oldConv.unread) {
+                            playNotificationSound();
+                            showDesktopNotification(
+                                `${newConv.name}`,
+                                newConv.lastMessage.substring(0, 100),
+                                '🌿'
+                            );
+                        }
+                    });
+                }
+                
+                lastConversationCount = newConversations.length;
+                conversations = newConversations;
                 renderConversations();
             } catch (error) {
                 console.error('Error loading conversations:', error);
@@ -506,7 +586,7 @@
                     <div class="conversation-details">
                         <div class="conversation-header">
                             <span class="customer-name">${conv.name || 'Unknown'}</span>
-                            <span class="time">${formatTime(conv.lastInteraction)}</span>
+                            <span class="time">${formatTimeRelative(conv.lastInteraction)}</span>
                         </div>
                         <div class="last-message">${conv.lastMessage || 'No messages'}</div>
                     </div>
@@ -547,7 +627,7 @@
                     <div class="message-bubble">
                         <div>${msg.text}</div>
                         <div class="message-time">
-                            ${formatTime(msg.timestamp)}
+                            ${formatTimeRelative(msg.timestamp)}
                             ${msg.type === 'staff' ? '<span class="message-status">✓✓</span>' : ''}
                         </div>
                     </div>
@@ -630,23 +710,73 @@
         
         function formatTime(timestamp) {
             const date = new Date(timestamp);
+            return date.toLocaleString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+        
+        function formatTimeRelative(timestamp) {
+            const date = new Date(timestamp);
             const now = new Date();
             const diff = now - date;
             
+            // Less than 1 minute
             if (diff < 60000) return 'Just now';
-            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
-            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
-            return date.toLocaleDateString();
+            
+            // Less than 1 hour
+            if (diff < 3600000) {
+                const mins = Math.floor(diff / 60000);
+                return `${mins}m ago`;
+            }
+            
+            // Less than 24 hours
+            if (diff < 86400000) {
+                const hours = Math.floor(diff / 3600000);
+                return `${hours}h ago`;
+            }
+            
+            // Less than 7 days
+            if (diff < 604800000) {
+                const days = Math.floor(diff / 86400000);
+                return `${days}d ago`;
+            }
+            
+            // More than 7 days - show date
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
         
-        // Initial load
-        loadConversations();
+        // Initialize
+        async function init() {
+            // Request notification permission on load
+            await requestNotificationPermission();
+            
+            // Initial load
+            await loadConversations();
+            
+            console.log('✅ Dashboard loaded - Features enabled:');
+            console.log('  🔔 Sound alerts');
+            console.log('  📬 Desktop notifications');
+            console.log('  ⏰ Relative timestamps');
+            console.log('  🔄 Auto-refresh (3s)');
+        }
+        
+        // Start the app
+        init();
         
         // Auto-refresh conversations every 3 seconds
         setInterval(loadConversations, 3000);
         
         // Auto-refresh active conversation messages every 2 seconds
         setInterval(refreshMessages, 2000);
+        
+        // Update relative timestamps every 30 seconds
+        setInterval(() => {
+            renderConversations();
+            if (currentCustomer) refreshMessages();
+        }, 30000);
         
         // Enter key to send
         document.getElementById('reply-input').addEventListener('keypress', (e) => {
@@ -658,8 +788,12 @@
             if (e.target.id === 'notes-modal') closeNotes();
         });
         
-        // Log to confirm auto-refresh is working
-        console.log('Dashboard loaded - auto-refresh enabled');
+        // Re-request notification permission if user clicks anywhere (for browsers that block on load)
+        document.addEventListener('click', () => {
+            if (notificationPermission === 'default') {
+                requestNotificationPermission();
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
