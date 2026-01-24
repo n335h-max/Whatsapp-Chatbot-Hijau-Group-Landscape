@@ -27,16 +27,21 @@ const handleWebhook = async (req, res) => {
     logger.info(`Incoming webhook payload: ${JSON.stringify(body, null, 2)}`);
 
     // Check if this is an event from a WhatsApp API subscription
-    if (body.object) {
+    if (body.object === 'whatsapp_business_account') {
         if (
             body.entry &&
+            body.entry[0] &&
             body.entry[0].changes &&
+            body.entry[0].changes[0] &&
+            body.entry[0].changes[0].value &&
             body.entry[0].changes[0].value.messages &&
             body.entry[0].changes[0].value.messages[0]
         ) {
             const entry = body.entry[0];
             const change = entry.changes[0].value;
             const message = change.messages[0];
+
+            logger.info(`Processing message - Type: ${message.type}, From: ${message.from}`);
 
             // Normalize sender ID: ensure it looks like 601110629990
             let from = message.from;
@@ -51,19 +56,27 @@ const handleWebhook = async (req, res) => {
                 }
             }
 
-            logger.info(`Received message from ${from}: ${JSON.stringify(message)}`);
+            logger.info(`Normalized sender: ${from}`);
 
             if (message.type === 'text') {
                 const messageHandler = require('../services/messageHandler');
                 await messageHandler.handleMessage(from, message);
+                logger.info(`Message handled successfully for ${from}`);
             } else {
                 logger.info(`Received non-text message type: ${message.type}`);
+            }
+        } else {
+            logger.warn('Webhook received but no message found in payload');
+            logger.warn(`Body structure: ${JSON.stringify(Object.keys(body))}`);
+            if (body.entry && body.entry[0]) {
+                logger.warn(`Entry structure: ${JSON.stringify(Object.keys(body.entry[0]))}`);
             }
         }
 
         // Always return 200 OK to WhatsApp
         res.sendStatus(200);
     } else {
+        logger.warn(`Received webhook with unexpected object type: ${body.object}`);
         res.sendStatus(404);
     }
 };
