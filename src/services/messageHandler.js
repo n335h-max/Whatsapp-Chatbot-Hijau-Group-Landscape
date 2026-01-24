@@ -100,6 +100,9 @@ async function sendWelcomeMenu(to, userContext) {
             }
         ]
     );
+    
+    // Log menu to conversation history
+    userContext.addMessage(greeting, 'bot');
 }
 
 const handleMessage = async (from, messageBody) => {
@@ -180,6 +183,7 @@ Kami menunggu untuk mendengar daripada anda! 💚
 We look forward to hearing from you! 💚`;
                 
                 await whatsapp.sendText(from, contactMsg);
+                userContext.addMessage(contactMsg, 'bot');
                 return;
             }
             
@@ -239,6 +243,7 @@ Waktu Operasi / Operating Hours:
 🕐 9:00 AM - 6:00 PM`;
         
         await whatsapp.sendText(from, handoverMsg);
+        userContext.addMessage(handoverMsg, 'bot');
         return;
     }
 
@@ -253,6 +258,7 @@ Waktu Operasi / Operating Hours:
     const exitKeywords = ['bye', 'thanks', 'tq', 'terima kasih', 'thank you', 'selesai', 'done'];
     if (exitKeywords.some(w => lowerCaseMessage.includes(w))) {
         await whatsapp.sendText(from, EXIT_MESSAGE_BILINGUAL);
+        userContext.addMessage(EXIT_MESSAGE_BILINGUAL, 'bot');
         return;
     }
 
@@ -295,6 +301,7 @@ Waktu Operasi / Operating Hours:
     fallbackMsg += "Atau taip 'agent' untuk bercakap dengan staf.\nOr type 'agent' to speak with staff.";
     
     await whatsapp.sendText(from, fallbackMsg);
+    userContext.addMessage(fallbackMsg, 'bot');
 };
 
 module.exports = {

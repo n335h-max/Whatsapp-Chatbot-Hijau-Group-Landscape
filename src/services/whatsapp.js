@@ -85,6 +85,21 @@ const sendDocument = (to, documentUrl, filename, caption = '') => {
     });
 };
 
+// Get customer profile information
+const getCustomerProfile = async (phoneNumber) => {
+    try {
+        const response = await whatsappApi.get(`/${phoneNumber}/`, {
+            params: {
+                fields: 'profile_picture_url,name'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        logger.error('Error fetching customer profile:', error.response ? error.response.data : error.message);
+        return null;
+    }
+};
+
 module.exports = {
     sendMessage,
     sendText,
@@ -92,4 +107,5 @@ module.exports = {
     sendInteractiveList,
     sendImage,
     sendDocument,
+    getCustomerProfile,
 };

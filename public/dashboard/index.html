@@ -78,6 +78,8 @@
             border-bottom: 1px solid #e2e8f0;
             cursor: pointer;
             transition: background 0.2s;
+            display: flex;
+            align-items: center;
         }
         
         .conversation-item:hover {
@@ -87,6 +89,11 @@
         .conversation-item.active {
             background: #ebf8ff;
             border-left: 4px solid #4299e1;
+        }
+        
+        .conversation-item.paused {
+            opacity: 0.7;
+            border-left: 3px solid #f59e0b;
         }
         
         .conversation-header {
@@ -346,22 +353,42 @@
             }
             
             list.innerHTML = conversations.map(conv => `
-                <div class="conversation-item" onclick="selectConversation('${conv.phone}')">
-                    <div class="conversation-header">
-                        <span class="customer-name">${conv.name || conv.phone}</span>
-                        <span class="time">${formatTime(conv.lastMessageTime)}</span>
+                <div class="conversation-item ${conv.isPaused ? 'paused' : ''}" onclick="selectConversation('${conv.phone}', ${conv.isPaused})">
+                    ${conv.profilePicture ? 
+                        `<img src="${conv.profilePicture}" alt="Profile" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover;">` :
+                        `<div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${conv.name.charAt(0).toUpperCase()}</div>`
+                    }
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="conversation-header">
+                            <span class="customer-name">${conv.name || conv.phone}</span>
+                            <span class="time">${formatTime(conv.lastMessageTime)}</span>
+                        </div>
+                        <div class="last-message">${conv.lastMessage.substring(0, 50)}...</div>
+                        ${conv.isPaused ? '<span style="color: #f59e0b; font-size: 12px;">⏸️ Paused</span>' : ''}
                     </div>
-                    <div class="last-message">${conv.lastMessage}</div>
                 </div>
             `).join('');
         }
         
-        async function selectConversation(phone) {
+        async function selectConversation(phone, isPaused = false) {
             currentCustomer = phone;
-            document.getElementById('customer-name').textContent = phone;
+            const conv = conversations.find(c => c.phone === phone);
+            
+            document.getElementById('customer-name').textContent = conv ? conv.name : phone;
             document.getElementById('customer-phone').textContent = phone;
             document.getElementById('bot-controls').style.display = 'flex';
             document.getElementById('reply-area').style.display = 'flex';
+            
+            // Toggle pause/resume buttons based on status
+            const pauseBtn = document.querySelector('.btn-pause');
+            const resumeBtn = document.querySelector('.btn-resume');
+            if (isPaused) {
+                pauseBtn.style.display = 'none';
+                resumeBtn.style.display = 'inline-block';
+            } else {
+                pauseBtn.style.display = 'inline-block';
+                resumeBtn.style.display = 'none';
+            }
             
             // Load messages
             const response = await fetch(`/api/dashboard/messages/${phone}`);
@@ -403,7 +430,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone: currentCustomer })
             });
-            alert('Bot paused for this customer');
+            
+            // Update UI immediately
+            document.querySelector('.btn-pause').style.display = 'none';
+            document.querySelector('.btn-resume').style.display = 'inline-block';
+            
+            // Reload conversations to update paused status
+            await loadConversations();
         }
         
         async function resumeBot() {
@@ -412,7 +445,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone: currentCustomer })
             });
-            alert('Bot resumed for this customer');
+            
+            // Update UI immediately
+            document.querySelector('.btn-pause').style.display = 'inline-block';
+            document.querySelector('.btn-resume').style.display = 'none';
+            
+            // Reload conversations to update paused status
+            await loadConversations();
         }
         
         function formatTime(timestamp) {
