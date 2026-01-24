@@ -299,4 +299,5 @@ Waktu Operasi / Operating Hours:
 
 module.exports = {
     handleMessage,
+    pausedUsers, // Export for dashboard access
 };
