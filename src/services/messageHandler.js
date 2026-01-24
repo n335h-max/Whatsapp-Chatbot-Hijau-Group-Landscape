@@ -75,6 +75,11 @@ const handleMessage = async (from, messageBody) => {
                 return;
             }
             
+            // Map button IDs to catalog names
+            const catalogMap = {
+                'stepping': 'stepping_slabs'
+            };
+            
             // Treat button ID as a keyword
             const faqAnswer = faqs.findFaqByTopic(buttonResponse.id);
             if (faqAnswer) {
@@ -82,9 +87,10 @@ const handleMessage = async (from, messageBody) => {
                 await whatsapp.sendText(from, faqAnswer);
                 userContext.addMessage(faqAnswer, 'bot');
                 
-                // Send catalog if available
-                if (hasCatalog(buttonResponse.id)) {
-                    const catalog = getCatalog(buttonResponse.id);
+                // Send catalog if available (check mapped name)
+                const catalogId = catalogMap[buttonResponse.id] || buttonResponse.id;
+                if (hasCatalog(catalogId)) {
+                    const catalog = getCatalog(catalogId);
                     const caption = `${catalog.caption_ms}\n\n${catalog.caption_en}`;
                     await whatsapp.sendDocument(from, catalog.url, catalog.filename, caption);
                 }
@@ -134,9 +140,15 @@ const handleMessage = async (from, messageBody) => {
             await whatsapp.sendText(from, faqAnswer);
             userContext.addMessage(faqAnswer, 'bot');
             
-            // Send catalog if available
-            if (hasCatalog(bestTopic)) {
-                const catalog = getCatalog(bestTopic);
+            // Map topic names to catalog names
+            const catalogMap = {
+                'stepping': 'stepping_slabs'
+            };
+            
+            // Send catalog if available (check mapped name)
+            const catalogId = catalogMap[bestTopic] || bestTopic;
+            if (hasCatalog(catalogId)) {
+                const catalog = getCatalog(catalogId);
                 const caption = `${catalog.caption_ms}\n\n${catalog.caption_en}`;
                 await whatsapp.sendDocument(from, catalog.url, catalog.filename, caption);
             }
