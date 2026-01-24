@@ -112,8 +112,34 @@ function getAllContexts() {
     return userContexts;
 }
 
+// Initialize contexts from database on startup
+async function initializeFromDatabase() {
+    const { getAllConversations } = require('./database');
+    try {
+        const conversations = await getAllConversations();
+        if (conversations && conversations.length > 0) {
+            for (const conv of conversations) {
+                const context = new UserContext(conv.phoneNumber);
+                context.name = conv.name;
+                context.location = conv.location;
+                context.interests = conv.interests || [];
+                context.conversationHistory = conv.conversationHistory || [];
+                context.lastInteraction = new Date(conv.lastInteraction);
+                userContexts.set(conv.phoneNumber, context);
+            }
+            console.log(`✅ Loaded ${conversations.length} conversations from database into memory`);
+        }
+    } catch (error) {
+        console.log('ℹ️ Running without database preload');
+    }
+}
+
+// Auto-initialize on module load
+initializeFromDatabase();
+
 module.exports = {
     getContext,
     getAllContexts,
-    UserContext
+    UserContext,
+    initializeFromDatabase
 };
