@@ -112,10 +112,10 @@ const faqs = [
     },
     {
         topic: 'grass',
-        keywords_ms: ['rumput', 'tiruan'],
-        keywords_en: ['grass', 'artificial', 'turf'],
-        answer_ms: "Kami menyediakan khidmat pasang rumput tiruan 30mm (nylon) yang lembut, tahan lasak dan sesuai untuk laman rumah, taman, balkoni dan laluan santai. Untuk rumput asli pula jenis cowgrass & philippine grass.",
-        answer_en: "We provide installation of 30mm artificial grass (nylon) which is soft, durable, and suitable for home gardens, parks, balconies, and walkways. For natural grass, we have Cowgrass & Philippine grass."
+        keywords_ms: ['rumput', 'tiruan', 'harga rumput', 'berapa rumput'],
+        keywords_en: ['grass', 'artificial', 'turf', 'grass price'],
+        answer_ms: "📋 Harga Rumput:\n\n🌱 Rumput Tiruan - RM6.00/sqft\n• Ketebalan: 30mm\n• Jaminan warna: 7 tahun\n• Lembut & tahan lama\n\n🌾 Philippine Grass - RM3.00/sqft\n• Rumput asli berkualiti\n• Jaminan pertumbuhan 1 bulan\n\n🌿 Cow Grass - RM2.00/sqft\n• Rumput asli ekonomikal\n• Jaminan pertumbuhan 1 bulan\n\nUntuk quotation area anda, hubungi Team Sales: 011-1062 9990",
+        answer_en: "📋 Grass Pricing:\n\n🌱 Artificial Grass - RM6.00/sqft\n• Thickness: 30mm\n• 7 years color warranty\n• Soft & durable\n\n🌾 Philippine Grass - RM3.00/sqft\n• Quality natural grass\n• 1 month growth warranty\n\n🌿 Cow Grass - RM2.00/sqft\n• Economical natural grass\n• 1 month growth warranty\n\nFor quotation of your area, contact Sales Team: 011-1062 9990"
     },
     {
         topic: 'process',
