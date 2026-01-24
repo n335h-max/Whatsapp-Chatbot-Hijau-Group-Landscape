@@ -180,16 +180,21 @@ function renderConversations() {
         return;
     }
     
-    list.innerHTML = conversations.map(conv => `
+    list.innerHTML = conversations.map(conv => {
+        const displayName = conv.name || conv.phone || 'Unknown';
+        const firstChar = displayName.charAt(0).toUpperCase();
+        const lastMsg = conv.lastMessage || 'No messages';
+        
+        return `
         <div class="conversation-item ${conv.isPaused ? 'paused' : ''} ${currentCustomer === conv.phone ? 'active' : ''}" 
              onclick="selectConversation('${conv.phone}', ${conv.isPaused})">
-            <div class="avatar">${conv.name.charAt(0).toUpperCase()}</div>
+            <div class="avatar">${firstChar}</div>
             <div class="conversation-content">
                 <div class="conversation-header">
-                    <span class="customer-name">${conv.name || conv.phone}</span>
+                    <span class="customer-name">${displayName}</span>
                     <span class="time">${formatRelativeTime(conv.lastMessageTime)}</span>
                 </div>
-                <div class="last-message">${conv.lastMessage.substring(0, 60)}...</div>
+                <div class="last-message">${lastMsg.substring(0, 60)}...</div>
                 <div class="conversation-tags">
                     ${getCustomerTags(conv).map(tag => `<span class="tag ${tag.class}">${tag.text}</span>`).join('')}
                     ${conv.isPaused ? '<span class="tag" style="background: #fed7d7; color: #9b2c2c;">⏸️ Paused</span>' : ''}
@@ -197,14 +202,15 @@ function renderConversations() {
             </div>
             ${conv.unreadCount > 0 ? `<div class="unread-badge">${conv.unreadCount}</div>` : ''}
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // Get customer interest tags
 function getCustomerTags(conv) {
     const tags = [];
     const interests = conv.interests || [];
-    const lastMsg = conv.lastMessage.toLowerCase();
+    const lastMsg = (conv.lastMessage || '').toLowerCase();
     
     if (interests.includes('water_feature') || lastMsg.includes('water') || lastMsg.includes('kolam')) {
         tags.push({ class: 'water', text: '💧 Water' });
@@ -220,7 +226,8 @@ function getCustomerTags(conv) {
     }
     
     // Hot lead detection (multiple messages or pricing questions)
-    if (conv.messageCount > 5 || lastMsg.includes('price') || lastMsg.includes('harga') || lastMsg.includes('quotation')) {
+    const messageCount = conv.messageCount || 0;
+    if (messageCount > 5 || lastMsg.includes('price') || lastMsg.includes('harga') || lastMsg.includes('quotation')) {
         tags.push({ class: 'hot-lead', text: '🔥 Hot Lead' });
     }
     

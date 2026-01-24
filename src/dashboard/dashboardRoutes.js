@@ -65,9 +65,9 @@ router.get('/conversations', async (req, res) => {
 });
 
 // Get messages for a specific customer
-router.get('/messages/:phone', (req, res) => {
+router.get('/messages/:phone', async (req, res) => {
     const phone = req.params.phone;
-    const context = getContext(phone);
+    const context = await getContext(phone);
     
     const messages = context.conversationHistory.map(msg => ({
         type: msg.type, // 'user' or 'bot'
@@ -86,7 +86,7 @@ router.post('/send', async (req, res) => {
         await whatsapp.sendText(to, message);
         
         // Log in context
-        const context = getContext(to);
+        const context = await getContext(to);
         context.addMessage(message, 'staff');
         
         res.json({ success: true });
