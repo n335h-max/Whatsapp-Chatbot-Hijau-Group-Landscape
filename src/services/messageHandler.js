@@ -52,7 +52,7 @@ Kami menghargai masa anda dan berharap dapat membantu merealisasikan projek land
 
 Untuk sebarang pertanyaan lanjut atau konsultasi percuma, sila hubungi Team Sales kami di WhatsApp: 011-1062 9990
 
-Kami sedia membantu anda! 💚
+Kami menunggu untuk mendengar daripada anda! 💚
 
 ━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -62,7 +62,7 @@ We appreciate your time and look forward to helping bring your dream landscape p
 
 For any further questions or free consultation, please contact our Sales Team on WhatsApp: 011-1062 9990
 
-We're here to help! 💚`;
+We look forward to hearing from you! 💚`;
 
 async function sendWelcomeMenu(to, userContext) {
     const greeting = userContext.getGreeting() || GREETING_MESSAGE_BILINGUAL;
@@ -176,7 +176,7 @@ Waktu Operasi / Operating Hours:
 Isi borang online di / Fill online form at:
 🔗 https://www.hijaugrouplandscape.com.my/contact
 
-Kami tunggu berita dari anda! 💚
+Kami menunggu untuk mendengar daripada anda! 💚
 We look forward to hearing from you! 💚`;
                 
                 await whatsapp.sendText(from, contactMsg);
