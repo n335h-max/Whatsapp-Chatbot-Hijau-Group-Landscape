@@ -23,6 +23,9 @@ const verifyWebhook = (req, res) => {
 const handleWebhook = async (req, res) => {
     const body = req.body;
 
+    // Log the incoming webhook payload
+    logger.info(`Incoming webhook payload: ${JSON.stringify(body, null, 2)}`);
+
     // Check if this is an event from a WhatsApp API subscription
     if (body.object) {
         if (
@@ -34,7 +37,19 @@ const handleWebhook = async (req, res) => {
             const entry = body.entry[0];
             const change = entry.changes[0].value;
             const message = change.messages[0];
-            const from = message.from;
+
+            // Normalize sender ID: ensure it looks like 601110629990
+            let from = message.from;
+            if (from) {
+                // Remove + if present
+                if (from.startsWith('+')) {
+                    from = from.substring(1);
+                }
+                // If it starts with 011..., change to 6011...
+                if (from.startsWith('0')) {
+                    from = '60' + from.substring(1);
+                }
+            }
 
             logger.info(`Received message from ${from}: ${JSON.stringify(message)}`);
 
