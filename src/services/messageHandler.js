@@ -6,6 +6,12 @@ const { getContext } = require('./contextManager');
 const { getCatalog, hasCatalog } = require('./catalogs');
 
 const pausedUsers = new Set();
+const staffNumbers = ['60111062999', '601234567890']; // Add your staff WhatsApp numbers here
+
+// Helper to check if sender is staff
+function isStaff(from) {
+    return staffNumbers.includes(from);
+}
 
 const GREETING_MESSAGE_BILINGUAL = `Selamat datang ke Hijau Group Landscape! 🌿
 
@@ -103,6 +109,36 @@ const handleMessage = async (from, messageBody) => {
     
     // Log user message
     userContext.addMessage(messageText, 'user');
+    
+    // Staff commands (only staff can use these)
+    if (isStaff(from)) {
+        // Staff can pause bot for any customer by messaging: "pause 60123456789"
+        if (lowerCaseMessage.startsWith('pause ')) {
+            const customerNumber = lowerCaseMessage.split(' ')[1];
+            pausedUsers.add(customerNumber);
+            await whatsapp.sendText(from, `✅ Bot paused for ${customerNumber}\n\nThe bot will not reply to this customer until you type: resume ${customerNumber}`);
+            return;
+        }
+        
+        // Staff can resume bot: "resume 60123456789"
+        if (lowerCaseMessage.startsWith('resume ')) {
+            const customerNumber = lowerCaseMessage.split(' ')[1];
+            pausedUsers.delete(customerNumber);
+            await whatsapp.sendText(from, `✅ Bot resumed for ${customerNumber}\n\nAutomatic replies are now active again.`);
+            return;
+        }
+        
+        // Check all paused users
+        if (lowerCaseMessage === 'paused list' || lowerCaseMessage === 'pausedlist') {
+            const paused = Array.from(pausedUsers);
+            if (paused.length === 0) {
+                await whatsapp.sendText(from, '✅ No customers are currently paused.');
+            } else {
+                await whatsapp.sendText(from, `⏸️ Paused customers (${paused.length}):\n\n${paused.join('\n')}\n\nType "resume [number]" to enable bot.`);
+            }
+            return;
+        }
+    }
 
     // Handle interactive button/list responses
     if (messageBody.type === 'interactive') {
