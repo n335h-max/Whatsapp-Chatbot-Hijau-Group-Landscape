@@ -170,6 +170,12 @@ Waktu Operasi / Operating Hours:
 📅 Isnin - Sabtu / Mon - Sat
 🕐 9:00 AM - 6:00 PM
 
+━━━━━━━━━━━━━━━━━━━━━━━
+
+📅 TEMPAH KONSULTASI / BOOK CONSULTATION:
+Isi borang online di / Fill online form at:
+🔗 https://www.hijaugrouplandscape.com.my/contact
+
 Kami tunggu berita dari anda! 💚
 We look forward to hearing from you! 💚`;
                 

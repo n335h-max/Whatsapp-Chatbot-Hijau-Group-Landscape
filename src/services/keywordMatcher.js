@@ -4,7 +4,7 @@ const faqKeywordVariations = {
     coverage: ['cover', 'kawasan', 'area', 'coverage', 'servis area', 'serve', 'operate', 'beroperasi', 'liputan'],
     services: ['servis', 'service', 'perkhidmatan', 'buat apa', 'what do', 'tawarkan', 'offer', 'provide', 'sediakan'],
     design: ['design', 'lukisan', '3d', 'cad', 'drawing', 'plan', 'pelan', 'reka bentuk'],
-    consultation: ['consultation', 'consult', 'site visit', 'lawatan', 'visit', 'tinjau', 'survey'],
+    consultation: ['consultation', 'consult', 'site visit', 'lawatan', 'visit', 'tinjau', 'survey', 'tempah', 'booking', 'book', 'janji', 'appointment', 'schedule', 'meet', 'jumpa'],
     pricing: ['harga', 'price', 'berapa', 'how much', 'cost', 'kos', 'bayaran', 'payment', 'charge', 'caj'],
     budget: ['bajet', 'budget', 'murah', 'cheap', 'affordable', 'pakej', 'package'],
     small_garden: ['laman kecil', 'small', 'tiny', 'kecil', 'mini'],

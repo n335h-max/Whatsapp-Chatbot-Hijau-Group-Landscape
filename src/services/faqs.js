@@ -49,10 +49,10 @@ const faqs = [
     },
     {
         topic: 'consultation',
-        keywords_ms: ['consultation', 'site visit', 'lawatan'],
-        keywords_en: ['consultation', 'site visit', 'visit'],
-        answer_ms: "Caj bergantung kepada lokasi dan skop projek. Untuk luar Negeri Sembilan, caj adalah sebanyak RM300. Caj ini akan ditolak jika pelanggan bersetuju meneruskan servis dengan kami.",
-        answer_en: "Charges depend on location and project scope. For outside Negeri Sembilan, the fee is RM300. This fee will be waived if you proceed with our services."
+        keywords_ms: ['consultation', 'consult', 'site visit', 'lawatan', 'tempah', 'booking', 'book', 'janji', 'appointment'],
+        keywords_en: ['consultation', 'consult', 'site visit', 'visit', 'booking', 'book', 'appointment', 'schedule'],
+        answer_ms: "Caj bergantung kepada lokasi dan skop projek. Untuk luar Negeri Sembilan, caj adalah sebanyak RM300. Caj ini akan ditolak jika pelanggan bersetuju meneruskan servis dengan kami.\n\n📅 Untuk tempah konsultasi atau site visit, sila isi borang di:\nhttps://www.hijaugrouplandscape.com.my/contact\n\nAtau hubungi Team Sales kami:\n📞 WhatsApp: 011-1062 9990",
+        answer_en: "Charges depend on location and project scope. For outside Negeri Sembilan, the fee is RM300. This fee will be waived if you proceed with our services.\n\n📅 To book a consultation or site visit, please fill in the form at:\nhttps://www.hijaugrouplandscape.com.my/contact\n\nOr contact our Sales Team:\n📞 WhatsApp: 011-1062 9990"
     },
     {
         topic: 'logistics',
