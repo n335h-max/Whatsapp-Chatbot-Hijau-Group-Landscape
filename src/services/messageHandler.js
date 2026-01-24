@@ -178,8 +178,25 @@ We look forward to hearing from you! 💚`;
 
     // 1. Human Handover Trigger
     if (lowerCaseMessage.includes('agent') || lowerCaseMessage.includes('staff') || lowerCaseMessage.includes('staf') || lowerCaseMessage.includes('manusia')) {
-        pausedUsers.add(from);
-        await whatsapp.sendText(from, "Baik, saya akan sambungkan anda kepada staf kami. Sila tunggu sebentar... ⏳\n\nOkay, I will connect you to our staff. Please wait a moment... ⏳");
+        const handoverMsg = `🙋‍♂️ Untuk bercakap dengan Team Sales kami secara langsung:
+
+📞 WhatsApp: 011-1062 9990
+
+Sila hubungi nombor di atas dan team kami akan membantu anda dengan segera! 💚
+
+━━━━━━━━━━━━━━━━━━━━━━━
+
+🙋‍♂️ To speak with our Sales Team directly:
+
+📞 WhatsApp: 011-1062 9990
+
+Please contact the number above and our team will assist you immediately! 💚
+
+Waktu Operasi / Operating Hours:
+📅 Isnin - Sabtu / Mon - Sat  
+🕐 9:00 AM - 6:00 PM`;
+        
+        await whatsapp.sendText(from, handoverMsg);
         return;
     }
 
