@@ -457,6 +457,18 @@
             alert('Bot resumed for this customer');
         }
         
+        async function refreshMessages() {
+            if (!currentCustomer) return;
+            
+            try {
+                const response = await fetch(`/api/dashboard/messages/${currentCustomer}`);
+                const messages = await response.json();
+                renderMessages(messages);
+            } catch (error) {
+                console.error('Error refreshing messages:', error);
+            }
+        }
+        
         function formatTime(timestamp) {
             const date = new Date(timestamp);
             const now = new Date();
@@ -468,12 +480,22 @@
             return date.toLocaleDateString();
         }
         
+        // Initial load
         loadConversations();
-        setInterval(loadConversations, 5000);
         
+        // Auto-refresh conversations every 3 seconds
+        setInterval(loadConversations, 3000);
+        
+        // Auto-refresh active conversation messages every 2 seconds
+        setInterval(refreshMessages, 2000);
+        
+        // Enter key to send
         document.getElementById('reply-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
+        
+        // Log to confirm auto-refresh is working
+        console.log('Dashboard loaded - auto-refresh enabled');
     </script>
 </body>
 </html>
