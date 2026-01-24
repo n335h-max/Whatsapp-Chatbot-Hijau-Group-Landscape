@@ -190,7 +190,40 @@ const findFaq = (message) => {
     return null;
 };
 
+const findFaqByTopic = (topic) => {
+    // Map topic names to FAQ topics
+    const topicMap = {
+        'location': 'location',
+        'coverage': 'cover_area',
+        'services': 'services',
+        'design': 'design',
+        'consultation': 'consultation',
+        'pricing': 'budget',
+        'budget': 'budget',
+        'small_garden': 'small_garden',
+        'maintenance': 'maintenance',
+        'water_feature': 'water_feature',
+        'planter_box': 'planter_box',
+        'stepping': 'stepping_slabs',
+        'wood': 'wood_work',
+        'grass': 'grass',
+        'process': 'process',
+        'duration': 'duration',
+        'portfolio': 'portfolio'
+    };
+
+    const faqTopic = topicMap[topic] || topic;
+    const faq = faqs.find(f => f.topic === faqTopic);
+    
+    if (faq) {
+        return `${faq.answer_ms}\n\n${faq.answer_en}`;
+    }
+    
+    return null;
+};
+
 module.exports = {
     findFaq,
+    findFaqByTopic,
     faqs
 };

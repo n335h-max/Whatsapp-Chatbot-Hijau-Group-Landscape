@@ -31,7 +31,53 @@ const sendText = (to, text) => {
     });
 };
 
+const sendInteractiveButtons = (to, bodyText, buttons) => {
+    return sendMessage(to, {
+        type: 'interactive',
+        interactive: {
+            type: 'button',
+            body: { text: bodyText },
+            action: {
+                buttons: buttons.map((btn, idx) => ({
+                    type: 'reply',
+                    reply: {
+                        id: btn.id || `btn_${idx}`,
+                        title: btn.title.substring(0, 20) // WhatsApp limit: 20 chars
+                    }
+                }))
+            }
+        }
+    });
+};
+
+const sendInteractiveList = (to, bodyText, buttonText, sections) => {
+    return sendMessage(to, {
+        type: 'interactive',
+        interactive: {
+            type: 'list',
+            body: { text: bodyText },
+            action: {
+                button: buttonText,
+                sections: sections
+            }
+        }
+    });
+};
+
+const sendImage = (to, imageUrl, caption = '') => {
+    return sendMessage(to, {
+        type: 'image',
+        image: {
+            link: imageUrl,
+            caption: caption
+        }
+    });
+};
+
 module.exports = {
     sendMessage,
     sendText,
+    sendInteractiveButtons,
+    sendInteractiveList,
+    sendImage,
 };
