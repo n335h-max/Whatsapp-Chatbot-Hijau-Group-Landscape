@@ -65,7 +65,13 @@ For any further questions or free consultation, please contact our Sales Team on
 We look forward to hearing from you! 💚`;
 
 async function sendWelcomeMenu(to, userContext) {
-    const greeting = userContext.getGreeting() || GREETING_MESSAGE_BILINGUAL;
+    // Build greeting with personalization if name exists
+    let greeting = GREETING_MESSAGE_BILINGUAL;
+    
+    // Add personalized greeting at the top if we have their name
+    if (userContext.name) {
+        greeting = `Hai ${userContext.name}! 👋\nHi ${userContext.name}! 👋\n\n` + greeting;
+    }
     
     // Send interactive list with common topics (max 10 rows total)
     await whatsapp.sendInteractiveList(
