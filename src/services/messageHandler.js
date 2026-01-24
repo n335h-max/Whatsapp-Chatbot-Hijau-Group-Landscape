@@ -105,8 +105,14 @@ async function sendWelcomeMenu(to, userContext) {
     userContext.addMessage(greeting, 'bot');
 }
 
-const handleMessage = async (from, messageBody) => {
+const handleMessage = async (from, messageBody, customerName = null) => {
     const userContext = getContext(from);
+    
+    // Update customer name if provided from webhook
+    if (customerName && !userContext.name) {
+        userContext.updateName(customerName);
+    }
+    
     const messageText = messageBody.text ? messageBody.text.body : '';
     const lowerCaseMessage = messageText.toLowerCase().trim();
     

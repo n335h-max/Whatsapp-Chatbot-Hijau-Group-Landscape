@@ -14,30 +14,14 @@ router.get('/conversations', async (req, res) => {
             ? context.conversationHistory[context.conversationHistory.length - 1]
             : null;
         
-        // Try to fetch customer profile info from WhatsApp
-        let profileName = context.name || phone;
-        let profilePicture = null;
-        
-        try {
-            const profile = await whatsapp.getCustomerProfile(phone);
-            if (profile && profile.name) {
-                profileName = profile.name;
-            }
-            if (profile && profile.profile_picture_url) {
-                profilePicture = profile.profile_picture_url;
-            }
-        } catch (error) {
-            // Silently fail, use phone number as fallback
-        }
-            
         conversations.push({
             phone: phone,
-            name: profileName,
-            profilePicture: profilePicture,
+            name: context.name || phone,
+            profilePicture: null, // WhatsApp API doesn't provide profile pics via Cloud API
             lastMessage: lastMessage ? lastMessage.message : 'No messages yet',
             lastMessageTime: lastMessage ? lastMessage.timestamp : context.lastInteraction,
             isPaused: pausedUsers.has(phone),
-            unreadCount: 0 // Can be enhanced later
+            unreadCount: 0
         });
     }
     

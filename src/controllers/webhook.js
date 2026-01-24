@@ -58,9 +58,16 @@ const handleWebhook = async (req, res) => {
 
                 logger.info(`Normalized sender: ${from}`);
 
+                // Extract customer name from contacts field if available
+                let customerName = null;
+                if (change.contacts && change.contacts[0]) {
+                    customerName = change.contacts[0].profile?.name || null;
+                    logger.info(`Customer name from webhook: ${customerName}`);
+                }
+
                 if (message.type === 'text' || message.type === 'interactive') {
                     const messageHandler = require('../services/messageHandler');
-                    await messageHandler.handleMessage(from, message);
+                    await messageHandler.handleMessage(from, message, customerName);
                     logger.info(`Message handled successfully for ${from}`);
                 } else {
                     logger.info(`Received non-text message type: ${message.type}`);

@@ -333,6 +333,7 @@
     <script>
         let currentCustomer = null;
         let conversations = [];
+        let messagesRefreshInterval = null;
         
         // Load conversations
         async function loadConversations() {
@@ -342,6 +343,19 @@
                 renderConversations();
             } catch (error) {
                 console.error('Error loading conversations:', error);
+            }
+        }
+        
+        // Auto-refresh messages for current conversation
+        async function refreshMessages() {
+            if (!currentCustomer) return;
+            
+            try {
+                const response = await fetch(`/api/dashboard/messages/${currentCustomer}`);
+                const messages = await response.json();
+                renderMessages(messages);
+            } catch (error) {
+                console.error('Error refreshing messages:', error);
             }
         }
         
@@ -390,23 +404,37 @@
                 resumeBtn.style.display = 'none';
             }
             
-            // Load messages
-            const response = await fetch(`/api/dashboard/messages/${phone}`);
-            const messages = await response.json();
-            renderMessages(messages);
+            // Clear existing message refresh interval
+            if (messagesRefreshInterval) {
+                clearInterval(messagesRefreshInterval);
+            }
+            
+            // Load messages immediately
+            await refreshMessages();
+            
+            // Start auto-refresh for messages every 3 seconds
+            messagesRefreshInterval = setInterval(refreshMessages, 3000);
         }
         
         function renderMessages(messages) {
             const container = document.getElementById('messages-container');
+            
+            // Check if user is at bottom before rendering
+            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+            
             container.innerHTML = messages.map(msg => `
                 <div class="message ${msg.type}">
                     <div class="message-bubble">
-                        <div>${msg.text}</div>
+                        <div style="white-space: pre-wrap;">${msg.text}</div>
                         <div class="message-time">${formatTime(msg.timestamp)}</div>
                     </div>
                 </div>
             `).join('');
-            container.scrollTop = container.scrollHeight;
+            
+            // Only auto-scroll if user was already at bottom
+            if (isAtBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
         }
         
         async function sendMessage() {
