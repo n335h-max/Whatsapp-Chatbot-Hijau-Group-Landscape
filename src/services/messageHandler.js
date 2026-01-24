@@ -22,34 +22,36 @@ For further assistance, please contact Team Sales on WhatsApp: 011-1062 9990.`;
 async function sendWelcomeMenu(to, userContext) {
     const greeting = userContext.getGreeting() || GREETING_MESSAGE_BILINGUAL;
     
-    // Send interactive list with common topics
+    // Send interactive list with common topics (20 char max for title)
     await whatsapp.sendInteractiveList(
         to,
         greeting,
-        '📋 Pilih Topik / Topics',
+        '📋 Pilih Topik',
         [
             {
-                title: 'Maklumat Asas / Basic Info',
+                title: 'Info Asas',
                 rows: [
-                    { id: 'location', title: '📍 Lokasi / Location', description: 'Our office location' },
-                    { id: 'coverage', title: '🗺️ Kawasan / Coverage', description: 'Service areas' },
-                    { id: 'services', title: '⚒️ Servis / Services', description: 'What we offer' }
+                    { id: 'location', title: '📍 Lokasi', description: 'Our office location' },
+                    { id: 'coverage', title: '🗺️ Kawasan Liputan', description: 'Service coverage areas' },
+                    { id: 'services', title: '⚒️ Perkhidmatan', description: 'Services we offer' }
                 ]
             },
             {
-                title: 'Perkhidmatan / Services',
+                title: 'Servis Utama',
                 rows: [
-                    { id: 'grass', title: '🌱 Rumput / Grass', description: 'Artificial & natural' },
-                    { id: 'water_feature', title: '🌊 Water Feature', description: 'Ponds & fountains' },
-                    { id: 'wood', title: '🪵 Kerja Kayu / Wood', description: 'Decking, fencing' }
+                    { id: 'grass', title: '🌱 Rumput', description: 'Artificial & natural grass' },
+                    { id: 'water_feature', title: '🌊 Water Feature', description: 'Ponds & water features' },
+                    { id: 'wood', title: '🪵 Kerja Kayu', description: 'Wood decking & fencing' },
+                    { id: 'planter_box', title: '🪴 Planter Box', description: 'Planter box & bench' },
+                    { id: 'stepping', title: '🪨 Stepping Slabs', description: 'Garden stepping stones' }
                 ]
             },
             {
-                title: 'Harga & Proses / Pricing',
+                title: 'Harga & Lain',
                 rows: [
-                    { id: 'pricing', title: '💰 Harga / Pricing', description: 'Cost & packages' },
-                    { id: 'process', title: '📝 Proses / Process', description: 'How we work' },
-                    { id: 'portfolio', title: '📸 Portfolio', description: 'Our past projects' }
+                    { id: 'pricing', title: '💰 Harga', description: 'Pricing & packages' },
+                    { id: 'process', title: '📝 Proses Kerja', description: 'Our work process' },
+                    { id: 'portfolio', title: '📸 Portfolio', description: 'Completed projects' }
                 ]
             }
         ]
