@@ -7,17 +7,46 @@ const { getCatalog, hasCatalog } = require('./catalogs');
 
 const pausedUsers = new Set();
 
-const GREETING_MESSAGE_BILINGUAL = `Terima kasih kerana menghubungi Hijau Group Landscape 🌿
-Kami menyediakan perkhidmatan landskap (Hardscape & Softscape), pemasangan rumput tiruan dan asli, ubah suai rumah serta kerja berkaitan.
+const GREETING_MESSAGE_BILINGUAL = `Selamat datang ke Hijau Group Landscape! 🌿
 
-Thank you for contacting Hijau Group Landscape 🌿
-We provide landscape services (Hardscape & Softscape), artificial and natural grass installation, home renovations, and related works.
+Kami pakar dalam perkhidmatan landskap premium:
+✅ Hardscape & Softscape
+✅ Rumput Tiruan & Asli
+✅ Water Feature & Kolam
+✅ Ubah Suai Rumah & Exterior Design
+✅ Planter Box, Decking & Kerja Kayu
+
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Welcome to Hijau Group Landscape! 🌿
+
+We specialize in premium landscape services:
+✅ Hardscape & Softscape
+✅ Artificial & Natural Grass
+✅ Water Features & Ponds
+✅ Home Renovation & Exterior Design
+✅ Planter Boxes, Decking & Woodwork
 
 Sila pilih topik di bawah atau tanya soalan anda:
 Please select a topic below or ask your question:`;
 
-const EXIT_MESSAGE_BILINGUAL = `Untuk bantuan lanjut, sila hubungi Team Sales di WhatsApp: 011-1062 9990.
-For further assistance, please contact Team Sales on WhatsApp: 011-1062 9990.`;
+const EXIT_MESSAGE_BILINGUAL = `Terima kasih kerana menghubungi Hijau Group Landscape! 🌿
+
+Kami menghargai masa anda dan berharap dapat membantu merealisasikan projek landskap impian anda. 
+
+Untuk sebarang pertanyaan lanjut atau konsultasi percuma, sila hubungi Team Sales kami di WhatsApp: 011-1062 9990
+
+Kami sedia membantu anda! 💚
+
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Thank you for contacting Hijau Group Landscape! 🌿
+
+We appreciate your time and look forward to helping bring your dream landscape project to life.
+
+For any further questions or free consultation, please contact our Sales Team on WhatsApp: 011-1062 9990
+
+We're here to help! 💚`;
 
 async function sendWelcomeMenu(to, userContext) {
     const greeting = userContext.getGreeting() || GREETING_MESSAGE_BILINGUAL;
@@ -71,7 +100,34 @@ const handleMessage = async (from, messageBody) => {
         if (buttonResponse && buttonResponse.id) {
             // Handle contact option
             if (buttonResponse.id === 'contact') {
-                await whatsapp.sendText(from, EXIT_MESSAGE_BILINGUAL);
+                const contactMsg = `📞 Hubungi Team Sales Kami / Contact Our Sales Team
+
+Sila hubungi Team Sales kami untuk:
+✅ Konsultasi PERCUMA
+✅ Quotation & Harga
+✅ Lawatan Tapak (Site Visit)
+✅ Design & Pelan 3D
+
+WhatsApp: 011-1062 9990
+
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Please contact our Sales Team for:
+✅ FREE Consultation
+✅ Quotation & Pricing
+✅ Site Visit
+✅ 3D Design & Plans
+
+WhatsApp: 011-1062 9990
+
+Waktu Operasi / Operating Hours:
+📅 Isnin - Sabtu / Mon - Sat
+🕐 9:00 AM - 6:00 PM
+
+Kami tunggu berita dari anda! 💚
+We look forward to hearing from you! 💚`;
+                
+                await whatsapp.sendText(from, contactMsg);
                 return;
             }
             
