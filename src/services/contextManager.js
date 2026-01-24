@@ -10,6 +10,9 @@ class UserContext {
         this.interests = []; // Topics they've asked about
         this.lastInteraction = new Date();
         this.conversationHistory = [];
+        this.staffNotes = ''; // Private notes for staff
+        this.unreadCount = 0; // Unread message counter
+        this.lastReadTime = new Date(); // Last time staff read messages
     }
 
     updateName(name) {
@@ -33,14 +36,31 @@ class UserContext {
         this.conversationHistory.push({
             message,
             type, // 'user' or 'bot'
-            timestamp: new Date()
+            timestamp: new Date(),
+            status: type === 'staff' ? 'sent' : null // Track message status for staff messages
         });
+        
+        // Increment unread if message from user
+        if (type === 'user') {
+            this.unreadCount++;
+        }
         
         // Keep only last 50 messages
         if (this.conversationHistory.length > 50) {
             this.conversationHistory.shift();
         }
         
+        this.saveToDB();
+    }
+
+    updateStaffNotes(notes) {
+        this.staffNotes = notes;
+        this.saveToDB();
+    }
+
+    markAsRead() {
+        this.unreadCount = 0;
+        this.lastReadTime = new Date();
         this.saveToDB();
     }
 
@@ -83,6 +103,9 @@ function getContext(phoneNumber) {
                 context.interests = savedContext.interests || [];
                 context.conversationHistory = savedContext.conversationHistory || [];
                 context.lastInteraction = new Date(savedContext.lastInteraction);
+                context.staffNotes = savedContext.staffNotes || '';
+                context.unreadCount = savedContext.unreadCount || 0;
+                context.lastReadTime = savedContext.lastReadTime ? new Date(savedContext.lastReadTime) : new Date();
             }
         }).catch(() => {
             // Silently fail if DB load fails
@@ -125,6 +148,9 @@ async function initializeFromDatabase() {
                 context.interests = conv.interests || [];
                 context.conversationHistory = conv.conversationHistory || [];
                 context.lastInteraction = new Date(conv.lastInteraction);
+                context.staffNotes = conv.staffNotes || '';
+                context.unreadCount = conv.unreadCount || 0;
+                context.lastReadTime = conv.lastReadTime ? new Date(conv.lastReadTime) : new Date();
                 userContexts.set(conv.phoneNumber, context);
             }
             console.log(`✅ Loaded ${conversations.length} conversations from database into memory`);

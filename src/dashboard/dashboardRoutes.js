@@ -17,7 +17,7 @@ router.get('/conversations', async (req, res) => {
                 name: conv.name || 'Unknown',
                 lastMessage: conv.conversationHistory[conv.conversationHistory.length - 1]?.message || '',
                 lastInteraction: conv.lastInteraction,
-                unread: 0
+                unread: conv.unreadCount || 0
             }));
             return res.json(conversations);
         }
@@ -33,7 +33,7 @@ router.get('/conversations', async (req, res) => {
                     name: context.name || 'Unknown',
                     lastMessage: context.conversationHistory[context.conversationHistory.length - 1]?.message || '',
                     lastInteraction: context.lastInteraction,
-                    unread: 0
+                    unread: context.unreadCount || 0
                 });
             }
         }
@@ -92,6 +92,29 @@ router.post('/resume', (req, res) => {
     const { phone } = req.body;
     const { pausedUsers } = require('../services/messageHandler');
     pausedUsers.delete(phone);
+    res.json({ success: true });
+});
+
+// Get notes for a customer
+router.get('/notes/:phone', (req, res) => {
+    const phone = req.params.phone;
+    const context = getContext(phone);
+    res.json({ notes: context.staffNotes || '' });
+});
+
+// Save notes for a customer
+router.post('/notes', (req, res) => {
+    const { phone, notes } = req.body;
+    const context = getContext(phone);
+    context.updateStaffNotes(notes);
+    res.json({ success: true });
+});
+
+// Mark conversation as read
+router.post('/mark-read', (req, res) => {
+    const { phone } = req.body;
+    const context = getContext(phone);
+    context.markAsRead();
     res.json({ success: true });
 });
 
