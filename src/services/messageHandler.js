@@ -79,8 +79,7 @@ const handleMessage = async (from, messageBody) => {
                 if (hasCatalog(buttonResponse.id)) {
                     const catalog = getCatalog(buttonResponse.id);
                     const caption = `${catalog.caption_ms}\n\n${catalog.caption_en}`;
-                    // Note: Add actual image sending when you have URLs
-                    // await whatsapp.sendImage(from, catalog.images[0], caption);
+                    await whatsapp.sendDocument(from, catalog.url, catalog.filename, caption);
                 }
                 return;
             }
@@ -132,7 +131,7 @@ const handleMessage = async (from, messageBody) => {
             if (hasCatalog(bestTopic)) {
                 const catalog = getCatalog(bestTopic);
                 const caption = `${catalog.caption_ms}\n\n${catalog.caption_en}`;
-                // await whatsapp.sendImage(from, catalog.images[0], caption);
+                await whatsapp.sendDocument(from, catalog.url, catalog.filename, caption);
             }
             return;
         }

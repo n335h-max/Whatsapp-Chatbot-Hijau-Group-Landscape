@@ -74,10 +74,22 @@ const sendImage = (to, imageUrl, caption = '') => {
     });
 };
 
+const sendDocument = (to, documentUrl, filename, caption = '') => {
+    return sendMessage(to, {
+        type: 'document',
+        document: {
+            link: documentUrl,
+            filename: filename,
+            caption: caption
+        }
+    });
+};
+
 module.exports = {
     sendMessage,
     sendText,
     sendInteractiveButtons,
     sendInteractiveList,
     sendImage,
+    sendDocument,
 };
