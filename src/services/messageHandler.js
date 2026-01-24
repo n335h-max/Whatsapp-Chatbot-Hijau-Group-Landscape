@@ -10,22 +10,32 @@ const pausedUsers = new Set();
 const GREETING_MESSAGE_BILINGUAL = `Selamat datang ke Hijau Group Landscape! 🌿
 
 Kami pakar dalam perkhidmatan landskap premium:
+✅ Konsultasi Landskap
+✅ Lukisan 3D & CAD
 ✅ Hardscape & Softscape
+✅ Renovasi Rumah
 ✅ Rumput Tiruan & Asli
 ✅ Water Feature & Kolam
-✅ Ubah Suai Rumah & Exterior Design
-✅ Planter Box, Decking & Kerja Kayu
+✅ Tiny House
+✅ Pemotongan Pokok & Rumput
+✅ Exterior Design
+✅ Awning (Rumah & Premis)
 
 ━━━━━━━━━━━━━━━━━━━━━━━
 
 Welcome to Hijau Group Landscape! 🌿
 
 We specialize in premium landscape services:
+✅ Landscape Consultation
+✅ 3D & CAD Drawings
 ✅ Hardscape & Softscape
+✅ House Renovation
 ✅ Artificial & Natural Grass
 ✅ Water Features & Ponds
-✅ Home Renovation & Exterior Design
-✅ Planter Boxes, Decking & Woodwork
+✅ Tiny House Construction
+✅ Tree & Grass Cutting
+✅ Exterior Design
+✅ Awning (Residential & Commercial)
 
 Sila pilih topik di bawah atau tanya soalan anda:
 Please select a topic below or ask your question:`;
