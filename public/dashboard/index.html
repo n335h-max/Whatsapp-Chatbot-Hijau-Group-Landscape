@@ -179,6 +179,17 @@
             background: #48bb78;
         }
         
+        .btn-logout {
+            background: #fc8181;
+            color: white;
+            font-size: 13px;
+            padding: 8px 16px;
+        }
+        
+        .btn-logout:hover {
+            background: #f56565;
+        }
+        
         .messages-container {
             flex: 1;
             overflow-y: auto;
@@ -285,9 +296,12 @@
             <div>
                 <h1>🌿 Hijau Group Landscape - Bot Dashboard</h1>
             </div>
-            <div class="status">
-                <div class="status-dot"></div>
-                <span>Bot Active</span>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Bot Active</span>
+                </div>
+                <button class="btn btn-logout" onclick="logout()">🚪 Logout</button>
             </div>
         </div>
         
@@ -331,9 +345,25 @@
     </div>
     
     <script>
+        // Check authentication before loading dashboard
+        const isAuth = sessionStorage.getItem('dashboard_auth');
+        const expiry = sessionStorage.getItem('dashboard_auth_expiry');
+        
+        if (!isAuth || isAuth !== 'true' || !expiry || Date.now() >= parseInt(expiry)) {
+            // Not authenticated or session expired, redirect to login
+            window.location.href = '/dashboard/login.html';
+        }
+        
         let currentCustomer = null;
         let conversations = [];
         let messagesRefreshInterval = null;
+        
+        // Logout function
+        function logout() {
+            sessionStorage.removeItem('dashboard_auth');
+            sessionStorage.removeItem('dashboard_auth_expiry');
+            window.location.href = '/dashboard/login.html';
+        }
         
         // Load conversations
         async function loadConversations() {

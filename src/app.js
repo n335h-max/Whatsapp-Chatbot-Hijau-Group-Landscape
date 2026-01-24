@@ -19,6 +19,11 @@ app.use(bodyParser.json());
 // Serve static files for dashboard
 app.use('/dashboard', express.static(path.join(__dirname, '../public/dashboard')));
 
+// Redirect /dashboard to login page
+app.get('/dashboard', (req, res) => {
+    res.redirect('/dashboard/login.html');
+});
+
 // API Routes
 app.use('/api/dashboard', dashboardRoutes);
 
