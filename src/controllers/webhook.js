@@ -58,7 +58,7 @@ const handleWebhook = async (req, res) => {
 
                 logger.info(`Normalized sender: ${from}`);
 
-                if (message.type === 'text') {
+                if (message.type === 'text' || message.type === 'interactive') {
                     const messageHandler = require('../services/messageHandler');
                     await messageHandler.handleMessage(from, message);
                     logger.info(`Message handled successfully for ${from}`);
