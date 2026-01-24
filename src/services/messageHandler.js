@@ -22,36 +22,35 @@ For further assistance, please contact Team Sales on WhatsApp: 011-1062 9990.`;
 async function sendWelcomeMenu(to, userContext) {
     const greeting = userContext.getGreeting() || GREETING_MESSAGE_BILINGUAL;
     
-    // Send interactive list with common topics (20 char max for title)
+    // Send interactive list with common topics (max 10 rows total)
     await whatsapp.sendInteractiveList(
         to,
         greeting,
         '📋 Pilih Topik',
         [
             {
-                title: 'Info Asas',
+                title: 'Maklumat',
                 rows: [
-                    { id: 'location', title: '📍 Lokasi', description: 'Our office location' },
-                    { id: 'coverage', title: '🗺️ Kawasan Liputan', description: 'Service coverage areas' },
-                    { id: 'services', title: '⚒️ Perkhidmatan', description: 'Services we offer' }
+                    { id: 'location', title: '📍 Lokasi', description: 'Office location & address' },
+                    { id: 'services', title: '⚒️ Perkhidmatan', description: 'All services we offer' },
+                    { id: 'pricing', title: '💰 Harga & Pakej', description: 'Pricing & packages' }
                 ]
             },
             {
-                title: 'Servis Utama',
+                title: 'Katalog',
                 rows: [
                     { id: 'grass', title: '🌱 Rumput', description: 'Artificial & natural grass' },
-                    { id: 'water_feature', title: '🌊 Water Feature', description: 'Ponds & water features' },
-                    { id: 'wood', title: '🪵 Kerja Kayu', description: 'Wood decking & fencing' },
-                    { id: 'planter_box', title: '🪴 Planter Box', description: 'Planter box & bench' },
+                    { id: 'water_feature', title: '🌊 Water Feature', description: 'Ponds & fountains' },
+                    { id: 'planter_box', title: '🪴 Planter Box', description: 'Boxes & benches' },
                     { id: 'stepping', title: '🪨 Stepping Slabs', description: 'Garden stepping stones' }
                 ]
             },
             {
-                title: 'Harga & Lain',
+                title: 'Lain-lain',
                 rows: [
-                    { id: 'pricing', title: '💰 Harga', description: 'Pricing & packages' },
-                    { id: 'process', title: '📝 Proses Kerja', description: 'Our work process' },
-                    { id: 'portfolio', title: '📸 Portfolio', description: 'Completed projects' }
+                    { id: 'process', title: '📝 Proses', description: 'How we work & payment' },
+                    { id: 'portfolio', title: '📸 Portfolio', description: 'Past projects & gallery' },
+                    { id: 'contact', title: '📞 Hubungi', description: 'Contact sales team' }
                 ]
             }
         ]
@@ -70,6 +69,12 @@ const handleMessage = async (from, messageBody) => {
     if (messageBody.type === 'interactive') {
         const buttonResponse = messageBody.interactive.button_reply || messageBody.interactive.list_reply;
         if (buttonResponse && buttonResponse.id) {
+            // Handle contact option
+            if (buttonResponse.id === 'contact') {
+                await whatsapp.sendText(from, EXIT_MESSAGE_BILINGUAL);
+                return;
+            }
+            
             // Treat button ID as a keyword
             const faqAnswer = faqs.findFaqByTopic(buttonResponse.id);
             if (faqAnswer) {
