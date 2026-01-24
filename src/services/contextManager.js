@@ -1,5 +1,6 @@
 // In-memory context storage (for production, use Redis or database)
 const userContexts = new Map();
+const { saveConversation, loadConversation } = require('./database');
 
 class UserContext {
     constructor(phoneNumber) {
@@ -13,16 +14,19 @@ class UserContext {
 
     updateName(name) {
         this.name = name;
+        this.saveToDB();
     }
 
     updateLocation(location) {
         this.location = location;
+        this.saveToDB();
     }
 
     addInterest(topic) {
         if (!this.interests.includes(topic)) {
             this.interests.push(topic);
         }
+        this.saveToDB();
     }
 
     addMessage(message, type = 'user') {
@@ -32,10 +36,12 @@ class UserContext {
             timestamp: new Date()
         });
         
-        // Keep only last 20 messages
-        if (this.conversationHistory.length > 20) {
+        // Keep only last 50 messages
+        if (this.conversationHistory.length > 50) {
             this.conversationHistory.shift();
         }
+        
+        this.saveToDB();
     }
 
     getInterests() {
@@ -52,10 +58,37 @@ class UserContext {
         }
         return null;
     }
+    
+    // Save to database
+    async saveToDB() {
+        try {
+            await saveConversation(this.phoneNumber, this);
+        } catch (error) {
+            // Silently fail if DB not available
+        }
+    }
 }
 
-function getContext(phoneNumber) {
+async function getContext(phoneNumber) {
     if (!userContexts.has(phoneNumber)) {
+        // Try to load from database first
+        try {
+            const savedContext = await loadConversation(phoneNumber);
+            if (savedContext) {
+                const context = new UserContext(phoneNumber);
+                context.name = savedContext.name;
+                context.location = savedContext.location;
+                context.interests = savedContext.interests || [];
+                context.conversationHistory = savedContext.conversationHistory || [];
+                context.lastInteraction = new Date(savedContext.lastInteraction);
+                userContexts.set(phoneNumber, context);
+                return context;
+            }
+        } catch (error) {
+            // Continue with new context if DB load fails
+        }
+        
+        // Create new context if not in DB
         userContexts.set(phoneNumber, new UserContext(phoneNumber));
     }
     
@@ -66,17 +99,17 @@ function getContext(phoneNumber) {
 
 function clearOldContexts() {
     const now = new Date();
-    const oneHour = 60 * 60 * 1000;
+    const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
     
     for (const [phoneNumber, context] of userContexts.entries()) {
-        if (now - context.lastInteraction > oneHour) {
+        if (now - context.lastInteraction > sevenDays) {
             userContexts.delete(phoneNumber);
         }
     }
 }
 
-// Clean up old contexts every 30 minutes
-setInterval(clearOldContexts, 30 * 60 * 1000);
+// Clean up old contexts every 24 hours
+setInterval(clearOldContexts, 24 * 60 * 60 * 1000);
 
 function getAllContexts() {
     return userContexts;

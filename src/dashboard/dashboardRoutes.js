@@ -2,14 +2,43 @@ const express = require('express');
 const router = express.Router();
 const whatsapp = require('../services/whatsapp');
 const { getContext, getAllContexts } = require('../services/contextManager');
+const { getAllConversations } = require('../services/database');
 const { pausedUsers } = require('../services/messageHandler');
 
 // Get all conversations
 router.get('/conversations', async (req, res) => {
-    const userContexts = getAllContexts();
     const conversations = [];
     
+    // Try to load from database first
+    try {
+        const dbConversations = await getAllConversations();
+        if (dbConversations && dbConversations.length > 0) {
+            dbConversations.forEach(conv => {
+                const lastMessage = conv.conversationHistory && conv.conversationHistory.length > 0 
+                    ? conv.conversationHistory[conv.conversationHistory.length - 1]
+                    : null;
+                
+                conversations.push({
+                    phone: conv.phoneNumber,
+                    name: conv.name || conv.phoneNumber,
+                    profilePicture: null,
+                    lastMessage: lastMessage ? lastMessage.message : 'No messages yet',
+                    lastMessageTime: lastMessage ? lastMessage.timestamp : conv.lastInteraction,
+                    isPaused: pausedUsers.has(conv.phoneNumber),
+                    unreadCount: 0
+                });
+            });
+        }
+    } catch (error) {
+        // Fallback to in-memory if DB fails
+    }
+    
+    // Also include in-memory contexts (in case DB is not available)
+    const userContexts = getAllContexts();
     for (const [phone, context] of userContexts.entries()) {
+        // Skip if already in DB results
+        if (conversations.find(c => c.phone === phone)) continue;
+        
         const lastMessage = context.conversationHistory.length > 0 
             ? context.conversationHistory[context.conversationHistory.length - 1]
             : null;
@@ -17,7 +46,7 @@ router.get('/conversations', async (req, res) => {
         conversations.push({
             phone: phone,
             name: context.name || phone,
-            profilePicture: null, // WhatsApp API doesn't provide profile pics via Cloud API
+            profilePicture: null,
             lastMessage: lastMessage ? lastMessage.message : 'No messages yet',
             lastMessageTime: lastMessage ? lastMessage.timestamp : context.lastInteraction,
             isPaused: pausedUsers.has(phone),
