@@ -69,27 +69,24 @@ class UserContext {
     }
 }
 
-async function getContext(phoneNumber) {
+function getContext(phoneNumber) {
     if (!userContexts.has(phoneNumber)) {
-        // Try to load from database first
-        try {
-            const savedContext = await loadConversation(phoneNumber);
+        // Create new context and try to load from database asynchronously
+        const context = new UserContext(phoneNumber);
+        userContexts.set(phoneNumber, context);
+        
+        // Load from database in background (don't block)
+        loadConversation(phoneNumber).then(savedContext => {
             if (savedContext) {
-                const context = new UserContext(phoneNumber);
                 context.name = savedContext.name;
                 context.location = savedContext.location;
                 context.interests = savedContext.interests || [];
                 context.conversationHistory = savedContext.conversationHistory || [];
                 context.lastInteraction = new Date(savedContext.lastInteraction);
-                userContexts.set(phoneNumber, context);
-                return context;
             }
-        } catch (error) {
-            // Continue with new context if DB load fails
-        }
-        
-        // Create new context if not in DB
-        userContexts.set(phoneNumber, new UserContext(phoneNumber));
+        }).catch(() => {
+            // Silently fail if DB load fails
+        });
     }
     
     const context = userContexts.get(phoneNumber);
