@@ -25,7 +25,9 @@ router.get('/conversations', async (req, res) => {
                     lastMessage: lastMessage ? lastMessage.message : 'No messages yet',
                     lastMessageTime: lastMessage ? lastMessage.timestamp : conv.lastInteraction,
                     isPaused: pausedUsers.has(conv.phoneNumber),
-                    unreadCount: 0
+                    unreadCount: 0,
+                    messageCount: conv.conversationHistory ? conv.conversationHistory.length : 0,
+                    interests: conv.interests || []
                 });
             });
         }
@@ -50,7 +52,9 @@ router.get('/conversations', async (req, res) => {
             lastMessage: lastMessage ? lastMessage.message : 'No messages yet',
             lastMessageTime: lastMessage ? lastMessage.timestamp : context.lastInteraction,
             isPaused: pausedUsers.has(phone),
-            unreadCount: 0
+            unreadCount: 0,
+            messageCount: context.conversationHistory.length,
+            interests: context.interests || []
         });
     }
     

@@ -4,7 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hijau Group Landscape - Bot Dashboard</title>
+    <link rel="manifest" href="/dashboard/manifest.json">
+    <meta name="theme-color" content="#667eea">
     <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #48bb78;
+            --warning: #f59e0b;
+            --danger: #f56565;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7fafc;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border: #e2e8f0;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --border: #4a5568;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,43 +36,57 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             min-height: 100vh;
+            transition: background 0.3s;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
         }
         
+        /* Header Styles */
         .header {
-            background: white;
-            padding: 20px 30px;
+            background: var(--bg-primary);
+            padding: 15px 25px;
             border-radius: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .header h1 {
-            color: #2d3748;
-            font-size: 24px;
+            color: var(--text-primary);
+            font-size: 20px;
         }
         
-        .header .status {
+        .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
         }
         
         .status-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #48bb78;
+            background: var(--success);
             animation: pulse 2s infinite;
         }
         
@@ -58,220 +95,451 @@
             50% { opacity: 0.5; }
         }
         
+        /* Stats Widget */
+        .stats-widget {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 20px;
-            height: calc(100vh - 140px);
+            gap: 15px;
+            height: calc(100vh - 230px);
         }
         
+        /* Search & Filter Bar */
+        .search-filter-bar {
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 10px 10px 0 0;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-chip {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        
+        .filter-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Conversations Panel */
         .conversations-panel {
-            background: white;
+            background: var(--bg-primary);
             border-radius: 15px;
-            padding: 20px;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
         .conversation-item {
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
             cursor: pointer;
             transition: background 0.2s;
             display: flex;
             align-items: center;
+            gap: 12px;
+            position: relative;
         }
         
         .conversation-item:hover {
-            background: #f7fafc;
+            background: var(--bg-secondary);
         }
         
         .conversation-item.active {
             background: #ebf8ff;
-            border-left: 4px solid #4299e1;
+            border-left: 4px solid var(--primary);
         }
         
         .conversation-item.paused {
             opacity: 0.7;
-            border-left: 3px solid #f59e0b;
+            border-left: 3px solid var(--warning);
+        }
+        
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .conversation-content {
+            flex: 1;
+            min-width: 0;
         }
         
         .conversation-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
+            align-items: center;
+            margin-bottom: 4px;
         }
         
         .customer-name {
             font-weight: 600;
-            color: #2d3748;
+            color: var(--text-primary);
+            font-size: 14px;
         }
         
         .time {
-            font-size: 12px;
-            color: #718096;
+            font-size: 11px;
+            color: var(--text-secondary);
         }
         
         .last-message {
-            font-size: 14px;
-            color: #4a5568;
+            font-size: 13px;
+            color: var(--text-secondary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 4px;
         }
         
+        .conversation-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .tag.water { background: #bee3f8; color: #2c5282; }
+        .tag.grass { background: #c6f6d5; color: #22543d; }
+        .tag.planter { background: #feebc8; color: #7c2d12; }
+        .tag.consultation { background: #e9d8fd; color: #553c9a; }
+        .tag.hot-lead { background: #fed7d7; color: #9b2c2c; }
+        
+        .unread-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        /* Chat Panel */
         .chat-panel {
-            background: white;
+            background: var(--bg-primary);
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         
         .chat-header {
-            padding: 20px;
-            border-bottom: 2px solid #e2e8f0;
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--bg-secondary);
         }
         
         .chat-info h2 {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 18px;
-            margin-bottom: 5px;
         }
         
         .chat-info .phone {
-            color: #718096;
-            font-size: 14px;
+            color: var(--text-secondary);
+            font-size: 13px;
         }
         
         .bot-controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 13px;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         
         .btn-pause {
-            background: #fc8181;
+            background: var(--warning);
             color: white;
         }
         
         .btn-pause:hover {
-            background: #f56565;
+            background: #d97706;
         }
         
         .btn-resume {
-            background: #68d391;
+            background: var(--success);
             color: white;
         }
         
         .btn-resume:hover {
-            background: #48bb78;
+            background: #38a169;
         }
         
-        .btn-logout {
-            background: #fc8181;
-            color: white;
-            font-size: 13px;
-            padding: 8px 16px;
+        .btn-logout, .btn-theme {
+            background: #cbd5e0;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-size: 12px;
         }
         
         .btn-logout:hover {
-            background: #f56565;
+            background: #a0aec0;
+        }
+        
+        .btn-canned {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-canned:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-add-note {
+            background: #805ad5;
+            color: white;
+        }
+        
+        .btn-add-note:hover {
+            background: #6b46c1;
         }
         
         .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: #f7fafc;
+            background: var(--bg-secondary);
+            scroll-behavior: smooth;
         }
         
         .message {
-            margin-bottom: 15px;
             display: flex;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s;
         }
         
-        .message.customer {
-            justify-content: flex-start;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .message.bot, .message.staff {
+        .message.user {
             justify-content: flex-end;
         }
         
         .message-bubble {
             max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            padding: 10px 15px;
+            border-radius: 12px;
+            position: relative;
         }
         
-        .message.customer .message-bubble {
-            background: white;
-            color: #2d3748;
-        }
-        
-        .message.bot .message-bubble {
-            background: #4299e1;
+        .message.user .message-bubble {
+            background: var(--primary);
             color: white;
+            border-bottom-right-radius: 4px;
         }
         
-        .message.staff .message-bubble {
-            background: #48bb78;
-            color: white;
+        .message.bot .message-bubble, .message.staff .message-bubble {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
         }
         
         .message-time {
             font-size: 11px;
             opacity: 0.7;
             margin-top: 5px;
+            text-align: right;
         }
         
+        .message-status {
+            font-size: 10px;
+            margin-left: 4px;
+        }
+        
+        /* Notes Section */
+        .customer-notes {
+            padding: 10px 20px;
+            background: #fffbeb;
+            border-top: 1px solid #fef3c7;
+            font-size: 12px;
+            color: #92400e;
+            display: none;
+        }
+        
+        .customer-notes.show {
+            display: block;
+        }
+        
+        .note-item {
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+        
+        /* Reply Area */
         .reply-area {
-            padding: 20px;
-            border-top: 2px solid #e2e8f0;
+            padding: 15px 20px;
+            border-top: 2px solid var(--border);
             display: flex;
             gap: 10px;
+            background: var(--bg-primary);
         }
         
         .reply-input {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 25px;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             font-size: 14px;
-            outline: none;
-            transition: border 0.3s;
-        }
-        
-        .reply-input:focus {
-            border-color: #4299e1;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: none;
+            font-family: inherit;
         }
         
         .btn-send {
-            background: #4299e1;
+            padding: 12px 25px;
+            background: var(--primary);
             color: white;
-            padding: 12px 30px;
             border: none;
-            border-radius: 25px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: background 0.3s;
         }
         
         .btn-send:hover {
-            background: #3182ce;
+            background: var(--primary-dark);
+        }
+        
+        /* Canned Responses Dropdown */
+        .canned-dropdown {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+        
+        .canned-dropdown.show {
+            display: block;
+        }
+        
+        .canned-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        
+        .canned-item:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .canned-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .canned-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
         
         .empty-state {
@@ -280,41 +548,142 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            color: #a0aec0;
+            color: var(--text-secondary);
         }
         
         .empty-state svg {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 20px;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .conversations-panel {
+                max-height: 400px;
+            }
+            
+            .chat-panel {
+                min-height: 500px;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .stats-widget {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+        
+        /* Notification Permission Banner */
+        .notification-banner {
+            background: #4299e1;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .notification-banner.show {
+            display: flex;
+        }
+        
+        .notification-banner button {
+            background: white;
+            color: #4299e1;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
+    <!-- Notification Permission Banner -->
+    <div id="notification-banner" class="notification-banner">
+        <span>🔔 Enable desktop notifications to get alerted on new messages</span>
+        <div>
+            <button onclick="requestNotificationPermission()">Enable</button>
+            <button onclick="hideNotificationBanner()" style="background: transparent; color: white;">Later</button>
+        </div>
+    </div>
+    
     <div class="container">
+        <!-- Header -->
         <div class="header">
             <div>
                 <h1>🌿 Hijau Group Landscape - Bot Dashboard</h1>
             </div>
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="header-actions">
                 <div class="status">
                     <div class="status-dot"></div>
                     <span>Bot Active</span>
                 </div>
+                <button class="btn btn-theme" onclick="toggleTheme()">🌙 Dark</button>
                 <button class="btn btn-logout" onclick="logout()">🚪 Logout</button>
             </div>
         </div>
         
+        <!-- Stats Widget -->
+        <div class="stats-widget">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-today">0</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-active">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-paused">0</div>
+                <div class="stat-label">Paused</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-avg-time">-</div>
+                <div class="stat-label">Avg Response</div>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
         <div class="dashboard">
+            <!-- Conversations Panel -->
             <div class="conversations-panel">
-                <h3 style="margin-bottom: 15px; color: #2d3748;">Recent Conversations</h3>
-                <div id="conversations-list">
+                <!-- Search & Filter -->
+                <div class="search-filter-bar">
+                    <input type="text" class="search-input" id="search-input" placeholder="🔍 Search by name or phone..." oninput="filterConversations()">
+                    <div class="filter-chips">
+                        <span class="filter-chip active" data-filter="all" onclick="setFilter('all')">All</span>
+                        <span class="filter-chip" data-filter="active" onclick="setFilter('active')">Active</span>
+                        <span class="filter-chip" data-filter="paused" onclick="setFilter('paused')">Paused</span>
+                        <span class="filter-chip" data-filter="unread" onclick="setFilter('unread')">Unread</span>
+                    </div>
+                </div>
+                
+                <!-- Conversations List -->
+                <div class="conversations-list" id="conversations-list">
                     <div class="empty-state">
                         <p>Loading conversations...</p>
                     </div>
                 </div>
             </div>
             
+            <!-- Chat Panel -->
             <div class="chat-panel">
                 <div class="chat-header">
                     <div class="chat-info">
@@ -322,11 +691,20 @@
                         <p class="phone" id="customer-phone"></p>
                     </div>
                     <div class="bot-controls" id="bot-controls" style="display: none;">
+                        <button class="btn btn-canned" onclick="toggleCannedResponses()">💬 Quick Reply</button>
+                        <button class="btn btn-add-note" onclick="addNote()">📝 Add Note</button>
                         <button class="btn btn-pause" onclick="pauseBot()">⏸️ Pause Bot</button>
                         <button class="btn btn-resume" onclick="resumeBot()" style="display: none;">▶️ Resume Bot</button>
                     </div>
                 </div>
                 
+                <!-- Customer Notes -->
+                <div class="customer-notes" id="customer-notes">
+                    <strong>📝 Notes:</strong>
+                    <div id="notes-list"></div>
+                </div>
+                
+                <!-- Messages Container -->
                 <div class="messages-container" id="messages-container">
                     <div class="empty-state">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,192 +714,23 @@
                     </div>
                 </div>
                 
+                <!-- Canned Responses Dropdown -->
+                <div class="canned-dropdown" id="canned-dropdown"></div>
+                
+                <!-- Reply Area -->
                 <div class="reply-area" id="reply-area" style="display: none;">
-                    <input type="text" class="reply-input" id="reply-input" placeholder="Type your message...">
+                    <textarea class="reply-input" id="reply-input" placeholder="Type your message..." rows="1" onkeydown="handleKeyPress(event)"></textarea>
                     <button class="btn-send" onclick="sendMessage()">Send</button>
                 </div>
             </div>
         </div>
     </div>
     
-    <script>
-        // Check authentication before loading dashboard
-        const isAuth = sessionStorage.getItem('dashboard_auth');
-        const expiry = sessionStorage.getItem('dashboard_auth_expiry');
-        
-        if (!isAuth || isAuth !== 'true' || !expiry || Date.now() >= parseInt(expiry)) {
-            // Not authenticated or session expired, redirect to login
-            window.location.href = '/dashboard/login.html';
-        }
-        
-        let currentCustomer = null;
-        let conversations = [];
-        let messagesRefreshInterval = null;
-        
-        // Logout function
-        function logout() {
-            sessionStorage.removeItem('dashboard_auth');
-            sessionStorage.removeItem('dashboard_auth_expiry');
-            window.location.href = '/dashboard/login.html';
-        }
-        
-        // Load conversations
-        async function loadConversations() {
-            try {
-                const response = await fetch('/api/dashboard/conversations');
-                conversations = await response.json();
-                renderConversations();
-            } catch (error) {
-                console.error('Error loading conversations:', error);
-            }
-        }
-        
-        // Auto-refresh messages for current conversation
-        async function refreshMessages() {
-            if (!currentCustomer) return;
-            
-            try {
-                const response = await fetch(`/api/dashboard/messages/${currentCustomer}`);
-                const messages = await response.json();
-                renderMessages(messages);
-            } catch (error) {
-                console.error('Error refreshing messages:', error);
-            }
-        }
-        
-        function renderConversations() {
-            const list = document.getElementById('conversations-list');
-            if (conversations.length === 0) {
-                list.innerHTML = '<div class="empty-state"><p>No conversations yet</p></div>';
-                return;
-            }
-            
-            list.innerHTML = conversations.map(conv => `
-                <div class="conversation-item ${conv.isPaused ? 'paused' : ''}" onclick="selectConversation('${conv.phone}', ${conv.isPaused})">
-                    ${conv.profilePicture ? 
-                        `<img src="${conv.profilePicture}" alt="Profile" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover;">` :
-                        `<div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${conv.name.charAt(0).toUpperCase()}</div>`
-                    }
-                    <div style="flex: 1; min-width: 0;">
-                        <div class="conversation-header">
-                            <span class="customer-name">${conv.name || conv.phone}</span>
-                            <span class="time">${formatTime(conv.lastMessageTime)}</span>
-                        </div>
-                        <div class="last-message">${conv.lastMessage.substring(0, 50)}...</div>
-                        ${conv.isPaused ? '<span style="color: #f59e0b; font-size: 12px;">⏸️ Paused</span>' : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        async function selectConversation(phone, isPaused = false) {
-            currentCustomer = phone;
-            const conv = conversations.find(c => c.phone === phone);
-            
-            document.getElementById('customer-name').textContent = conv ? conv.name : phone;
-            document.getElementById('customer-phone').textContent = phone;
-            document.getElementById('bot-controls').style.display = 'flex';
-            document.getElementById('reply-area').style.display = 'flex';
-            
-            // Toggle pause/resume buttons based on status
-            const pauseBtn = document.querySelector('.btn-pause');
-            const resumeBtn = document.querySelector('.btn-resume');
-            if (isPaused) {
-                pauseBtn.style.display = 'none';
-                resumeBtn.style.display = 'inline-block';
-            } else {
-                pauseBtn.style.display = 'inline-block';
-                resumeBtn.style.display = 'none';
-            }
-            
-            // Clear existing message refresh interval
-            if (messagesRefreshInterval) {
-                clearInterval(messagesRefreshInterval);
-            }
-            
-            // Load messages immediately
-            await refreshMessages();
-            
-            // Start auto-refresh for messages every 3 seconds
-            messagesRefreshInterval = setInterval(refreshMessages, 3000);
-        }
-        
-        function renderMessages(messages) {
-            const container = document.getElementById('messages-container');
-            
-            // Check if user is at bottom before rendering
-            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
-            
-            container.innerHTML = messages.map(msg => `
-                <div class="message ${msg.type}">
-                    <div class="message-bubble">
-                        <div style="white-space: pre-wrap;">${msg.text}</div>
-                        <div class="message-time">${formatTime(msg.timestamp)}</div>
-                    </div>
-                </div>
-            `).join('');
-            
-            // Only auto-scroll if user was already at bottom
-            if (isAtBottom) {
-                container.scrollTop = container.scrollHeight;
-            }
-        }
-        
-        async function sendMessage() {
-            const input = document.getElementById('reply-input');
-            const message = input.value.trim();
-            if (!message || !currentCustomer) return;
-            
-            await fetch('/api/dashboard/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: currentCustomer, message })
-            });
-            
-            input.value = '';
-            selectConversation(currentCustomer); // Reload messages
-        }
-        
-        async function pauseBot() {
-            await fetch('/api/dashboard/pause', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: currentCustomer })
-            });
-            
-            // Update UI immediately
-            document.querySelector('.btn-pause').style.display = 'none';
-            document.querySelector('.btn-resume').style.display = 'inline-block';
-            
-            // Reload conversations to update paused status
-            await loadConversations();
-        }
-        
-        async function resumeBot() {
-            await fetch('/api/dashboard/resume', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: currentCustomer })
-            });
-            
-            // Update UI immediately
-            document.querySelector('.btn-pause').style.display = 'inline-block';
-            document.querySelector('.btn-resume').style.display = 'none';
-            
-            // Reload conversations to update paused status
-            await loadConversations();
-        }
-        
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        }
-        
-        // Load conversations on page load
-        loadConversations();
-        
-        // Refresh every 5 seconds
-        setInterval(loadConversations, 5000);
-    </script>
+    <!-- Audio for notifications -->
+    <audio id="notification-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRQ0PVqzn77BdGAk+ltryxnMpBSuBzvLZiTYIGmi78OScTRANUKjj8bdjHAY5ktfyzn0sBSV4x/DdkD8KFF6z6eylUxQKRZ/g8r5sIQU0idLy2oY2Bx9uwPDkmEYNCVas5++wXBkJPpfa8sZ0KAUrgc/y14s1CBpou+3mnUwODVGo4/G3YhsGOpLX8s58Kwck" type="audio/wav">
+    </audio>
+    
+    <script src="/dashboard/dashboard.js"></script>
 </body>
 </html>
