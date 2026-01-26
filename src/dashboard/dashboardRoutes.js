@@ -4,33 +4,39 @@ const whatsapp = require('../services/whatsapp');
 const { getContext, getAllContexts } = require('../services/contextManager');
 const { getAllConversations } = require('../services/database');
 
-// Simple in-memory store for latest new message
-let latestNotification = null;
+// Notification history cache (keep last 50)
+const notificationHistory = [];
+const MAX_HISTORY = 50;
 
 // Set new notification (called from webhook/message handler)
 function setNewMessageNotification(name, message, phone) {
-    latestNotification = {
+    const notification = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         name: name || 'Unknown',
         text: message,
         phone: phone,
         timestamp: Date.now()
     };
+
+    notificationHistory.push(notification);
+
+    // Trim history if needed
+    if (notificationHistory.length > MAX_HISTORY) {
+        notificationHistory.shift();
+    }
 }
 
-// Get latest notification
+// Get latest notifications
 router.get('/notifications', (req, res) => {
-    if (latestNotification) {
-        const notification = latestNotification;
-        latestNotification = null; // Reset after sending
-        res.json({ 
-            newMessage: true, 
-            name: notification.name,
-            text: notification.text,
-            phone: notification.phone
-        });
-    } else {
-        res.json({ newMessage: false });
-    }
+    const since = parseInt(req.query.since) || 0;
+
+    // Filter notifications newer than 'since' timestamp
+    const newNotifications = notificationHistory.filter(n => n.timestamp > since);
+
+    res.json({
+        hasNew: newNotifications.length > 0,
+        notifications: newNotifications
+    });
 });
 
 // Get all conversations
@@ -38,29 +44,29 @@ router.get('/conversations', async (req, res) => {
     try {
         // Always try to get from database first for most up-to-date data
         const dbConversations = await getAllConversations();
-        
+
         if (dbConversations && dbConversations.length > 0) {
             // Return conversations from database
             const conversations = dbConversations.map(conv => ({
                 phone: conv.phoneNumber,
                 name: conv.name || 'Unknown',
-                lastMessage: conv.conversationHistory && conv.conversationHistory.length > 0 
+                lastMessage: conv.conversationHistory && conv.conversationHistory.length > 0
                     ? conv.conversationHistory[conv.conversationHistory.length - 1]?.message || ''
                     : 'No messages',
                 lastInteraction: conv.lastInteraction,
                 unread: conv.unreadCount || 0
             }));
-            
+
             // Sort by last interaction (most recent first)
             conversations.sort((a, b) => new Date(b.lastInteraction) - new Date(a.lastInteraction));
-            
+
             return res.json(conversations);
         }
-        
+
         // Fallback to in-memory contexts
         const contexts = getAllContexts();
         const conversations = [];
-        
+
         for (const [phone, context] of contexts.entries()) {
             if (context.conversationHistory.length > 0) {
                 conversations.push({
@@ -72,10 +78,10 @@ router.get('/conversations', async (req, res) => {
                 });
             }
         }
-        
+
         // Sort by last interaction (most recent first)
         conversations.sort((a, b) => new Date(b.lastInteraction) - new Date(a.lastInteraction));
-        
+
         res.json(conversations);
     } catch (error) {
         console.error('Error loading conversations:', error);
@@ -86,19 +92,19 @@ router.get('/conversations', async (req, res) => {
 // Get messages for a specific customer
 router.get('/messages/:phone', async (req, res) => {
     const phone = req.params.phone;
-    
+
     try {
         // Get context (synchronous)
         const context = getContext(phone);
-        
+
         // Small delay to allow async DB loading to complete
         await new Promise(resolve => setTimeout(resolve, 100));
-        
+
         // If still no messages, try loading from database directly
         if (context.conversationHistory.length === 0) {
             const { loadConversation } = require('../services/database');
             const dbContext = await loadConversation(phone);
-            
+
             if (dbContext && dbContext.conversationHistory) {
                 // Update in-memory context
                 context.conversationHistory = dbContext.conversationHistory;
@@ -109,13 +115,13 @@ router.get('/messages/:phone', async (req, res) => {
                 context.unreadCount = dbContext.unreadCount || 0;
             }
         }
-        
+
         const messages = context.conversationHistory.map(msg => ({
             type: msg.type, // 'user' or 'bot'
             text: msg.message,
             timestamp: msg.timestamp
         }));
-        
+
         res.json(messages);
     } catch (error) {
         console.error('Error loading messages:', error);
@@ -126,14 +132,14 @@ router.get('/messages/:phone', async (req, res) => {
 // Send message to customer
 router.post('/send', async (req, res) => {
     const { to, message } = req.body;
-    
+
     try {
         await whatsapp.sendText(to, message);
-        
+
         // Log in context
         const context = getContext(to);
         context.addMessage(message, 'staff');
-        
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });

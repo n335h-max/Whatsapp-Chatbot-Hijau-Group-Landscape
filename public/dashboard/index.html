@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -11,20 +12,20 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 10px;
         }
-        
+
         .header {
             background: white;
             padding: 15px 20px;
@@ -37,19 +38,19 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .header h1 {
             color: #2d3748;
             font-size: 18px;
         }
-        
+
         .header .status {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 14px;
         }
-        
+
         .status-dot {
             width: 10px;
             height: 10px;
@@ -57,19 +58,26 @@
             background: #48bb78;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
-        
+
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 10px;
             height: calc(100vh - 100px);
         }
-        
+
         .conversations-panel {
             background: white;
             border-radius: 15px;
@@ -78,7 +86,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             -webkit-overflow-scrolling: touch;
         }
-        
+
         .conversations-panel h3 {
             margin-bottom: 15px;
             color: #2d3748;
@@ -89,7 +97,7 @@
             padding: 10px 0;
             z-index: 10;
         }
-        
+
         .conversation-item {
             padding: 12px;
             border-bottom: 1px solid #e2e8f0;
@@ -102,16 +110,16 @@
             border-radius: 10px;
             margin-bottom: 5px;
         }
-        
+
         .conversation-item:hover {
             background: #f7fafc;
         }
-        
+
         .conversation-item.active {
             background: #ebf8ff;
             border-left: 4px solid #4299e1;
         }
-        
+
         .avatar {
             width: 45px;
             height: 45px;
@@ -126,7 +134,7 @@
             flex-shrink: 0;
             position: relative;
         }
-        
+
         .unread-badge {
             position: absolute;
             top: -5px;
@@ -143,31 +151,31 @@
             font-weight: bold;
             border: 2px solid white;
         }
-        
+
         .conversation-details {
             flex: 1;
             min-width: 0;
         }
-        
+
         .conversation-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 5px;
             align-items: center;
         }
-        
+
         .customer-name {
             font-weight: 600;
             color: #2d3748;
             font-size: 14px;
         }
-        
+
         .time {
             font-size: 11px;
             color: #718096;
             white-space: nowrap;
         }
-        
+
         .last-message {
             font-size: 13px;
             color: #4a5568;
@@ -175,7 +183,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        
+
         .chat-panel {
             background: white;
             border-radius: 15px;
@@ -183,7 +191,7 @@
             flex-direction: column;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         .chat-header {
             padding: 20px;
             border-bottom: 2px solid #e2e8f0;
@@ -191,23 +199,23 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .chat-info h2 {
             color: #2d3748;
             font-size: 18px;
             margin-bottom: 5px;
         }
-        
+
         .chat-info .phone {
             color: #718096;
             font-size: 14px;
         }
-        
+
         .bot-controls {
             display: flex;
             gap: 10px;
         }
-        
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -218,16 +226,16 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn:active {
             transform: scale(0.95);
         }
-        
+
         .btn.loading {
             opacity: 0.7;
             pointer-events: none;
         }
-        
+
         .btn.loading::after {
             content: '';
             position: absolute;
@@ -241,50 +249,59 @@
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
         }
-        
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .btn-pause {
             background: #fc8181;
             color: white;
         }
-        
+
         .btn-pause:hover {
             background: #f56565;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(252, 129, 129, 0.3);
         }
-        
+
         .btn-resume {
             background: #68d391;
             color: white;
             animation: pulse-green 2s infinite;
         }
-        
+
         .btn-resume:hover {
             background: #48bb78;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(104, 211, 145, 0.3);
         }
-        
+
         @keyframes pulse-green {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(104, 211, 145, 0.7); }
-            50% { box-shadow: 0 0 0 10px rgba(104, 211, 145, 0); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(104, 211, 145, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 10px rgba(104, 211, 145, 0);
+            }
         }
-        
+
         .btn-notes {
             background: #f6ad55;
             color: white;
         }
-        
+
         .btn-notes:hover {
             background: #ed8936;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(246, 173, 85, 0.3);
         }
-        
+
         .bot-paused-banner {
             background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
             color: white;
@@ -295,53 +312,64 @@
             font-weight: 600;
             animation: slideDown 0.3s ease-out;
         }
-        
+
         .bot-paused-banner.show {
             display: flex;
         }
-        
+
         @keyframes slideDown {
             from {
                 transform: translateY(-100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
-        
+
         .bot-paused-banner .icon {
             font-size: 20px;
             animation: blink 1s infinite;
         }
-        
+
         @keyframes blink {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.5; }
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+            }
+
+            25%,
+            75% {
+                opacity: 0.5;
+            }
         }
-        
+
         .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
             background: #f7fafc;
         }
-        
+
         .message {
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
         }
-        
+
         .message.user {
             align-items: flex-start;
         }
-        
-        .message.bot, .message.staff {
+
+        .message.bot,
+        .message.staff {
             align-items: flex-end;
         }
-        
+
         .message-bubble {
             max-width: 70%;
             padding: 12px 16px;
@@ -349,22 +377,22 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             position: relative;
         }
-        
+
         .message.user .message-bubble {
             background: white;
             color: #2d3748;
         }
-        
+
         .message.bot .message-bubble {
             background: #4299e1;
             color: white;
         }
-        
+
         .message.staff .message-bubble {
             background: #48bb78;
             color: white;
         }
-        
+
         .message-time {
             font-size: 11px;
             opacity: 0.7;
@@ -373,18 +401,18 @@
             align-items: center;
             gap: 5px;
         }
-        
+
         .message-status {
             font-size: 14px;
         }
-        
+
         .reply-area {
             padding: 20px;
             border-top: 2px solid #e2e8f0;
             display: flex;
             gap: 10px;
         }
-        
+
         .reply-input {
             flex: 1;
             padding: 12px 16px;
@@ -394,11 +422,11 @@
             outline: none;
             transition: border 0.3s;
         }
-        
+
         .reply-input:focus {
             border-color: #4299e1;
         }
-        
+
         .btn-send {
             background: #4299e1;
             color: white;
@@ -409,11 +437,11 @@
             font-weight: 600;
             transition: background 0.3s;
         }
-        
+
         .btn-send:hover {
             background: #3182ce;
         }
-        
+
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -422,13 +450,13 @@
             height: 100%;
             color: #a0aec0;
         }
-        
+
         .empty-state svg {
             width: 100px;
             height: 100px;
             margin-bottom: 20px;
         }
-        
+
         .notes-modal {
             display: none;
             position: fixed;
@@ -441,11 +469,11 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .notes-modal.active {
             display: flex;
         }
-        
+
         .notes-content {
             background: white;
             border-radius: 15px;
@@ -454,12 +482,12 @@
             max-width: 600px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-        
+
         .notes-content h3 {
             margin-bottom: 20px;
             color: #2d3748;
         }
-        
+
         .notes-textarea {
             width: 100%;
             min-height: 200px;
@@ -471,36 +499,36 @@
             resize: vertical;
             outline: none;
         }
-        
+
         .notes-textarea:focus {
             border-color: #4299e1;
         }
-        
+
         .notes-actions {
             display: flex;
             gap: 10px;
             margin-top: 20px;
             justify-content: flex-end;
         }
-        
+
         .btn-cancel {
             background: #e2e8f0;
             color: #2d3748;
         }
-        
+
         .btn-cancel:hover {
             background: #cbd5e0;
         }
-        
+
         .btn-save {
             background: #4299e1;
             color: white;
         }
-        
+
         .btn-save:hover {
             background: #3182ce;
         }
-        
+
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             body {
@@ -508,30 +536,30 @@
                 overflow-y: auto;
                 position: relative;
             }
-            
+
             .container {
                 padding: 5px;
             }
-            
+
             .header {
                 padding: 12px 15px;
                 margin-bottom: 5px;
             }
-            
+
             .header h1 {
                 font-size: 16px;
             }
-            
+
             .header .status {
                 font-size: 12px;
             }
-            
+
             .dashboard {
                 grid-template-columns: 1fr;
                 height: calc(100vh - 70px);
                 gap: 0;
             }
-            
+
             .conversations-panel {
                 display: none;
                 position: fixed;
@@ -545,71 +573,71 @@
                 height: 100vh;
                 overflow-y: auto;
             }
-            
+
             .conversations-panel.mobile-show {
                 display: block;
             }
-            
+
             .conversation-item {
                 padding: 10px;
                 margin-bottom: 3px;
             }
-            
+
             .avatar {
                 width: 40px;
                 height: 40px;
                 font-size: 14px;
             }
-            
+
             .customer-name {
                 font-size: 13px;
             }
-            
+
             .last-message {
                 font-size: 12px;
             }
-            
+
             .chat-panel {
                 border-radius: 0;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
             }
-            
+
             .chat-header {
                 padding: 12px 15px;
                 flex-shrink: 0;
             }
-            
+
             .chat-info h2 {
                 font-size: 16px;
             }
-            
+
             .chat-info .phone {
                 font-size: 12px;
             }
-            
+
             .bot-controls {
                 flex-wrap: wrap;
             }
-            
+
             .btn {
                 padding: 8px 15px;
                 font-size: 13px;
             }
-            
+
             .messages-container {
                 padding: 10px;
                 flex: 1;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
             }
-            
+
             .message-bubble {
                 max-width: 85%;
                 font-size: 14px;
             }
-            
+
             .reply-area {
                 padding: 10px;
                 flex-shrink: 0;
@@ -617,28 +645,28 @@
                 position: sticky;
                 bottom: 0;
             }
-            
+
             .reply-input {
                 font-size: 16px;
                 padding: 10px 14px;
             }
-            
+
             .btn-send {
                 padding: 10px 20px;
                 font-size: 14px;
             }
-            
+
             .notes-content {
                 width: 95%;
                 max-width: none;
                 padding: 20px;
             }
-            
+
             .notes-textarea {
                 min-height: 150px;
                 font-size: 14px;
             }
-            
+
             /* Mobile back button */
             .mobile-back-btn {
                 display: flex;
@@ -654,25 +682,26 @@
                 margin-bottom: 10px;
             }
         }
-        
+
         @media (min-width: 769px) {
             .mobile-back-btn {
                 display: none;
             }
-            
+
             .chat-panel {
                 display: flex !important;
             }
         }
-        
+
         /* Smooth scrolling for all devices */
         .conversations-panel,
         .messages-container {
             scroll-behavior: smooth;
         }
-        
+
         /* Better touch targets for mobile */
         @media (max-width: 768px) {
+
             .conversation-item,
             .btn,
             .message {
@@ -681,6 +710,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -692,7 +722,7 @@
                 <span>Bot Active</span>
             </div>
         </div>
-        
+
         <div class="dashboard">
             <div class="conversations-panel" id="conversations-panel">
                 <button class="mobile-back-btn" onclick="hideMobileConversations()">
@@ -705,13 +735,13 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="chat-panel" id="chat-panel">
                 <div class="bot-paused-banner" id="paused-banner">
                     <span class="icon">⏸️</span>
                     <span>Bot is PAUSED for this customer - Manual mode active</span>
                 </div>
-                
+
                 <div class="chat-header">
                     <div class="chat-info">
                         <button class="mobile-back-btn" onclick="showMobileConversations()">
@@ -723,19 +753,22 @@
                     <div class="bot-controls" id="bot-controls" style="display: none;">
                         <button class="btn btn-notes" onclick="openNotes()">📝 Notes</button>
                         <button class="btn btn-pause" id="btn-pause" onclick="pauseBot()">⏸️ Pause Bot</button>
-                        <button class="btn btn-resume" id="btn-resume" onclick="resumeBot()" style="display: none;">▶️ Resume Bot</button>
+                        <button class="btn btn-resume" id="btn-resume" onclick="resumeBot()" style="display: none;">▶️
+                            Resume Bot</button>
                     </div>
                 </div>
-                
+
                 <div class="messages-container" id="messages-container">
                     <div class="empty-state">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
                         </svg>
                         <p>Select a conversation to view messages</p>
                     </div>
                 </div>
-                
+
                 <div class="reply-area" id="reply-area" style="display: none;">
                     <input type="text" class="reply-input" id="reply-input" placeholder="Type your message...">
                     <button class="btn-send" onclick="sendMessage()">Send</button>
@@ -743,45 +776,52 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Notes Modal -->
     <div class="notes-modal" id="notes-modal">
         <div class="notes-content">
             <h3>📝 Private Notes</h3>
-            <textarea class="notes-textarea" id="notes-textarea" placeholder="Add private notes about this customer..."></textarea>
+            <textarea class="notes-textarea" id="notes-textarea"
+                placeholder="Add private notes about this customer..."></textarea>
             <div class="notes-actions">
                 <button class="btn btn-cancel" onclick="closeNotes()">Cancel</button>
                 <button class="btn btn-save" onclick="saveNotes()">Save Notes</button>
             </div>
         </div>
     </div>
-    
+
     <script>
         let currentCustomer = null;
         let conversations = [];
         let lastConversationCount = 0;
         let notificationPermission = 'default';
-        
+        let lastNotificationTime = Date.now();
+
         // Create notification sound (using Web Audio API)
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
+
         function playNotificationSound() {
+            // Resume context if suspended (browser autoplay policy)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            
+
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
-            
+
             oscillator.frequency.value = 800; // Frequency in Hz
             oscillator.type = 'sine';
-            
+
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
+
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.5);
         }
-        
+
         // Request notification permission
         async function requestNotificationPermission() {
             if ('Notification' in window) {
@@ -789,7 +829,7 @@
                 console.log('Notification permission:', notificationPermission);
             }
         }
-        
+
         // Show desktop notification
         function showDesktopNotification(title, body, icon = '🌿') {
             if (notificationPermission === 'granted') {
@@ -800,17 +840,17 @@
                     tag: 'whatsapp-bot',
                     requireInteraction: false
                 });
-                
-                notification.onclick = function() {
+
+                notification.onclick = function () {
                     window.focus();
                     notification.close();
                 };
-                
+
                 // Auto close after 5 seconds
                 setTimeout(() => notification.close(), 5000);
             }
         }
-        
+
         function getInitials(name) {
             if (!name || name === 'Unknown') return '?';
             const parts = name.split(' ');
@@ -819,12 +859,12 @@
             }
             return name.substring(0, 2).toUpperCase();
         }
-        
+
         async function loadConversations() {
             try {
                 const response = await fetch('/api/dashboard/conversations');
                 const newConversations = await response.json();
-                
+
                 // Update conversation list (notifications handled by polling endpoint)
                 lastConversationCount = newConversations.length;
                 conversations = newConversations;
@@ -833,14 +873,14 @@
                 console.error('Error loading conversations:', error);
             }
         }
-        
+
         function renderConversations() {
             const list = document.getElementById('conversations-list');
             if (conversations.length === 0) {
                 list.innerHTML = '<div class="empty-state"><p>No conversations yet</p></div>';
                 return;
             }
-            
+
             list.innerHTML = conversations.map(conv => `
                 <div class="conversation-item ${conv.phone === currentCustomer ? 'active' : ''}" onclick="selectConversation('${conv.phone}', '${conv.name || 'Unknown'}')">
                     <div class="avatar">
@@ -857,40 +897,40 @@
                 </div>
             `).join('');
         }
-        
+
         async function selectConversation(phone, name) {
             currentCustomer = phone;
             document.getElementById('customer-name').textContent = name;
             document.getElementById('customer-phone').textContent = phone;
             document.getElementById('bot-controls').style.display = 'flex';
             document.getElementById('reply-area').style.display = 'flex';
-            
+
             renderConversations();
-            
+
             // Hide conversations panel on mobile after selection
             if (window.innerWidth <= 768) {
                 hideMobileConversations();
             }
-            
+
             // Mark as read
             await fetch('/api/dashboard/mark-read', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone })
             });
-            
+
             const response = await fetch(`/api/dashboard/messages/${phone}`);
             const messages = await response.json();
             renderMessages(messages);
         }
-        
+
         function renderMessages(messages) {
             const container = document.getElementById('messages-container');
             if (messages.length === 0) {
                 container.innerHTML = '<div class="empty-state"><p>No messages yet</p></div>';
                 return;
             }
-            
+
             container.innerHTML = messages.map(msg => `
                 <div class="message ${msg.type}">
                     <div class="message-bubble">
@@ -904,47 +944,47 @@
             `).join('');
             container.scrollTop = container.scrollHeight;
         }
-        
+
         async function sendMessage() {
             const input = document.getElementById('reply-input');
             const message = input.value.trim();
             if (!message || !currentCustomer) return;
-            
+
             await fetch('/api/dashboard/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ to: currentCustomer, message })
             });
-            
+
             input.value = '';
-            
+
             const conv = conversations.find(c => c.phone === currentCustomer);
             const customerName = conv ? conv.name : 'Unknown';
             selectConversation(currentCustomer, customerName);
         }
-        
+
         async function pauseBot() {
             const pauseBtn = document.getElementById('btn-pause');
             const resumeBtn = document.getElementById('btn-resume');
             const banner = document.getElementById('paused-banner');
-            
+
             // Add loading animation
             pauseBtn.classList.add('loading');
             pauseBtn.disabled = true;
-            
+
             try {
                 await fetch('/api/dashboard/pause', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone: currentCustomer })
                 });
-                
+
                 // Success animation
                 pauseBtn.classList.remove('loading');
                 pauseBtn.style.display = 'none';
                 resumeBtn.style.display = 'block';
                 banner.classList.add('show');
-                
+
                 // Show success message with animation
                 showToast('⏸️ Bot paused - Manual mode activated', 'success');
             } catch (error) {
@@ -953,30 +993,30 @@
                 showToast('❌ Failed to pause bot', 'error');
             }
         }
-        
+
         async function resumeBot() {
             const pauseBtn = document.getElementById('btn-pause');
             const resumeBtn = document.getElementById('btn-resume');
             const banner = document.getElementById('paused-banner');
-            
+
             // Add loading animation
             resumeBtn.classList.add('loading');
             resumeBtn.disabled = true;
-            
+
             try {
                 await fetch('/api/dashboard/resume', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone: currentCustomer })
                 });
-                
+
                 // Success animation
                 resumeBtn.classList.remove('loading');
                 resumeBtn.style.display = 'none';
                 pauseBtn.style.display = 'block';
                 pauseBtn.disabled = false;
                 banner.classList.remove('show');
-                
+
                 // Show success message with animation
                 showToast('▶️ Bot resumed - Automated responses active', 'success');
             } catch (error) {
@@ -985,7 +1025,7 @@
                 showToast('❌ Failed to resume bot', 'error');
             }
         }
-        
+
         function showToast(message, type = 'info') {
             // Create toast element
             const toast = document.createElement('div');
@@ -1003,16 +1043,16 @@
                 z-index: 10000;
                 animation: slideInRight 0.3s ease-out;
             `;
-            
+
             document.body.appendChild(toast);
-            
+
             // Remove after 3 seconds
             setTimeout(() => {
                 toast.style.animation = 'slideOutRight 0.3s ease-out';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-        
+
         // Add toast animations to style
         const toastStyles = document.createElement('style');
         toastStyles.textContent = `
@@ -1038,20 +1078,20 @@
             }
         `;
         document.head.appendChild(toastStyles);
-        
+
         async function openNotes() {
             if (!currentCustomer) return;
-            
+
             const response = await fetch(`/api/dashboard/notes/${currentCustomer}`);
             const data = await response.json();
             document.getElementById('notes-textarea').value = data.notes || '';
             document.getElementById('notes-modal').classList.add('active');
         }
-        
+
         function closeNotes() {
             document.getElementById('notes-modal').classList.remove('active');
         }
-        
+
         async function saveNotes() {
             const notes = document.getElementById('notes-textarea').value;
             await fetch('/api/dashboard/notes', {
@@ -1062,10 +1102,10 @@
             closeNotes();
             alert('Notes saved successfully');
         }
-        
+
         async function refreshMessages() {
             if (!currentCustomer) return;
-            
+
             try {
                 const response = await fetch(`/api/dashboard/messages/${currentCustomer}`);
                 const messages = await response.json();
@@ -1074,66 +1114,66 @@
                 console.error('Error refreshing messages:', error);
             }
         }
-        
+
         function formatTime(timestamp) {
             const date = new Date(timestamp);
-            return date.toLocaleString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
-        
+
         function formatTimeRelative(timestamp) {
             const date = new Date(timestamp);
             const now = new Date();
             const diff = now - date;
-            
+
             // Less than 1 minute
             if (diff < 60000) return 'Just now';
-            
+
             // Less than 1 hour
             if (diff < 3600000) {
                 const mins = Math.floor(diff / 60000);
                 return `${mins}m ago`;
             }
-            
+
             // Less than 24 hours
             if (diff < 86400000) {
                 const hours = Math.floor(diff / 3600000);
                 return `${hours}h ago`;
             }
-            
+
             // Less than 7 days
             if (diff < 604800000) {
                 const days = Math.floor(diff / 86400000);
                 return `${days}d ago`;
             }
-            
+
             // More than 7 days - show date
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
-        
+
         // Mobile navigation functions
         function showMobileConversations() {
             const conversationsPanel = document.getElementById('conversations-panel');
             conversationsPanel.classList.add('mobile-show');
         }
-        
+
         function hideMobileConversations() {
             const conversationsPanel = document.getElementById('conversations-panel');
             conversationsPanel.classList.remove('mobile-show');
         }
-        
+
         // Initialize
         async function init() {
             // Request notification permission on load
             await requestNotificationPermission();
-            
+
             // Initial load
             await loadConversations();
-            
+
             console.log('✅ Dashboard loaded - Features enabled:');
             console.log('  🔔 Sound alerts');
             console.log('  📬 Desktop notifications');
@@ -1141,21 +1181,31 @@
             console.log('  🔄 Auto-refresh (3s)');
             console.log('  📱 Mobile responsive');
         }
-        
+
         // Poll for new message notifications every 5 seconds
         async function checkNotifications() {
             try {
-                const response = await fetch('/api/dashboard/notifications');
+                const response = await fetch(`/api/dashboard/notifications?since=${lastNotificationTime}`);
                 const data = await response.json();
-                
-                if (data.newMessage) {
+
+                if (data.hasNew && data.notifications.length > 0) {
+                    // Update timestamp to the latest notification
+                    const latest = data.notifications[data.notifications.length - 1];
+                    lastNotificationTime = latest.timestamp;
+
                     playNotificationSound();
-                    showDesktopNotification(
-                        `New message from ${data.name} 📩`,
-                        data.text.substring(0, 100),
-                        '🌿'
-                    );
-                    
+
+                    // Show notifications (limit to last 3 to avoid spam)
+                    const toShow = data.notifications.slice(-3);
+
+                    toShow.forEach(n => {
+                        showDesktopNotification(
+                            `New message from ${n.name} 📩`,
+                            n.text.substring(0, 100),
+                            '🌿'
+                        );
+                    });
+
                     // Refresh conversations to update UI
                     await loadConversations();
                 }
@@ -1163,41 +1213,45 @@
                 console.error('Error checking notifications:', error);
             }
         }
-        
+
         // Start the app
         init();
-        
+
         // Auto-refresh conversations every 3 seconds
         setInterval(loadConversations, 3000);
-        
+
         // Auto-refresh active conversation messages every 2 seconds
         setInterval(refreshMessages, 2000);
-        
+
         // Poll for notifications every 5 seconds
         setInterval(checkNotifications, 5000);
-        
+
         // Update relative timestamps every 30 seconds
         setInterval(() => {
             renderConversations();
             if (currentCustomer) refreshMessages();
         }, 30000);
-        
+
         // Enter key to send
         document.getElementById('reply-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
-        
+
         // Close notes modal when clicking outside
         document.getElementById('notes-modal').addEventListener('click', (e) => {
             if (e.target.id === 'notes-modal') closeNotes();
         });
-        
-        // Re-request notification permission if user clicks anywhere (for browsers that block on load)
+
+        // Resume audio context and re-request notification permission on interaction
         document.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
             if (notificationPermission === 'default') {
                 requestNotificationPermission();
             }
         }, { once: true });
     </script>
 </body>
+
 </html>
