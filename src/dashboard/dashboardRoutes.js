@@ -4,6 +4,35 @@ const whatsapp = require('../services/whatsapp');
 const { getContext, getAllContexts } = require('../services/contextManager');
 const { getAllConversations } = require('../services/database');
 
+// Simple in-memory store for latest new message
+let latestNotification = null;
+
+// Set new notification (called from webhook/message handler)
+function setNewMessageNotification(name, message, phone) {
+    latestNotification = {
+        name: name || 'Unknown',
+        text: message,
+        phone: phone,
+        timestamp: Date.now()
+    };
+}
+
+// Get latest notification
+router.get('/notifications', (req, res) => {
+    if (latestNotification) {
+        const notification = latestNotification;
+        latestNotification = null; // Reset after sending
+        res.json({ 
+            newMessage: true, 
+            name: notification.name,
+            text: notification.text,
+            phone: notification.phone
+        });
+    } else {
+        res.json({ newMessage: false });
+    }
+});
+
 // Get all conversations
 router.get('/conversations', async (req, res) => {
     try {
@@ -151,3 +180,4 @@ router.post('/mark-read', (req, res) => {
 });
 
 module.exports = router;
+module.exports.setNewMessageNotification = setNewMessageNotification;

@@ -83,6 +83,13 @@ const handleWebhook = async (req, res) => {
                     const messageHandler = require('../services/messageHandler');
                     await messageHandler.handleMessage(from, message, customerName);
                     logger.info(`Message handled successfully for ${from}`);
+                    
+                    // Notify dashboard about new message
+                    const { setNewMessageNotification } = require('../dashboard/dashboardRoutes');
+                    const messageText = message.type === 'text' 
+                        ? message.text.body 
+                        : 'Interactive message';
+                    setNewMessageNotification(customerName, messageText, from);
                 } else {
                     logger.info(`Received non-text message type: ${message.type}`);
                 }

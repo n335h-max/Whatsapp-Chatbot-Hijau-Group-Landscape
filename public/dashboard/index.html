@@ -825,32 +825,7 @@
                 const response = await fetch('/api/dashboard/conversations');
                 const newConversations = await response.json();
                 
-                // Check for new messages
-                if (lastConversationCount > 0 && newConversations.length > lastConversationCount) {
-                    const newConv = newConversations[0]; // Most recent
-                    playNotificationSound();
-                    showDesktopNotification(
-                        `New message from ${newConv.name}`,
-                        newConv.lastMessage.substring(0, 100),
-                        '🌿'
-                    );
-                }
-                
-                // Check for unread messages in existing conversations
-                if (lastConversationCount > 0) {
-                    newConversations.forEach(newConv => {
-                        const oldConv = conversations.find(c => c.phone === newConv.phone);
-                        if (oldConv && newConv.unread > oldConv.unread) {
-                            playNotificationSound();
-                            showDesktopNotification(
-                                `${newConv.name}`,
-                                newConv.lastMessage.substring(0, 100),
-                                '🌿'
-                            );
-                        }
-                    });
-                }
-                
+                // Update conversation list (notifications handled by polling endpoint)
                 lastConversationCount = newConversations.length;
                 conversations = newConversations;
                 renderConversations();
@@ -1167,6 +1142,28 @@
             console.log('  📱 Mobile responsive');
         }
         
+        // Poll for new message notifications every 5 seconds
+        async function checkNotifications() {
+            try {
+                const response = await fetch('/api/dashboard/notifications');
+                const data = await response.json();
+                
+                if (data.newMessage) {
+                    playNotificationSound();
+                    showDesktopNotification(
+                        `New message from ${data.name} 📩`,
+                        data.text.substring(0, 100),
+                        '🌿'
+                    );
+                    
+                    // Refresh conversations to update UI
+                    await loadConversations();
+                }
+            } catch (error) {
+                console.error('Error checking notifications:', error);
+            }
+        }
+        
         // Start the app
         init();
         
@@ -1175,6 +1172,9 @@
         
         // Auto-refresh active conversation messages every 2 seconds
         setInterval(refreshMessages, 2000);
+        
+        // Poll for notifications every 5 seconds
+        setInterval(checkNotifications, 5000);
         
         // Update relative timestamps every 30 seconds
         setInterval(() => {
