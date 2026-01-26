@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Hijau Group Landscape - Bot Dashboard</title>
     <style>
         * {
@@ -504,7 +504,9 @@
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             body {
-                overflow: hidden;
+                overflow-x: hidden;
+                overflow-y: auto;
+                position: relative;
             }
             
             .container {
@@ -541,6 +543,7 @@
                 border-radius: 0;
                 padding: 10px;
                 height: 100vh;
+                overflow-y: auto;
             }
             
             .conversations-panel.mobile-show {
@@ -569,10 +572,13 @@
             .chat-panel {
                 border-radius: 0;
                 height: 100%;
+                display: flex;
+                flex-direction: column;
             }
             
             .chat-header {
                 padding: 12px 15px;
+                flex-shrink: 0;
             }
             
             .chat-info h2 {
@@ -594,6 +600,9 @@
             
             .messages-container {
                 padding: 10px;
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             
             .message-bubble {
@@ -603,10 +612,14 @@
             
             .reply-area {
                 padding: 10px;
+                flex-shrink: 0;
+                background: white;
+                position: sticky;
+                bottom: 0;
             }
             
             .reply-input {
-                font-size: 14px;
+                font-size: 16px;
                 padding: 10px 14px;
             }
             
