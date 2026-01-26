@@ -1,6 +1,20 @@
 const config = require('../config');
 const logger = require('../utils/logger');
 
+// Track recent call auto-replies to prevent spam (1-time reply guard)
+const callReplyCache = new Map(); // phoneNumber -> timestamp
+const CALL_REPLY_COOLDOWN = 3600000; // 1 hour in milliseconds
+
+// Clean up old cache entries every hour
+setInterval(() => {
+    const now = Date.now();
+    for (const [phone, timestamp] of callReplyCache.entries()) {
+        if (now - timestamp > CALL_REPLY_COOLDOWN) {
+            callReplyCache.delete(phone);
+        }
+    }
+}, CALL_REPLY_COOLDOWN);
+
 // Verify webhook
 const verifyWebhook = (req, res) => {
     const mode = req.query['hub.mode'];
@@ -65,34 +79,68 @@ const handleWebhook = async (req, res) => {
                     logger.info(`Customer name from webhook: ${customerName}`);
                 }
 
-                // Handle call events (missed calls)
-                if (message.type === 'call_log') {
-                    logger.info(`📞 Call detected from ${from} - Sending auto-reply`);
-                    const whatsapp = require('../services/whatsapp');
-                    const autoReplyMessage = `Terima kasih kerana menghubungi Hijau Group Landscape 🌿
-
-Untuk pertanyaan, sila WhatsApp mesej sahaja.
-Panggilan tidak dipantau. Terima kasih 🙏
-
-────────────────
-
-Thank you for contacting Hijau Group Landscape 🌿
-
-For inquiries, please WhatsApp message only.
-Calls are not monitored. Thank you 🙏`;
-                    
-                    await whatsapp.sendText(from, autoReplyMessage);
-                    logger.info(`✅ Auto-reply sent to ${from} for call`);
-                } else if (message.type === 'text' || message.type === 'interactive') {
+                if (message.type === 'text' || message.type === 'interactive') {
                     const messageHandler = require('../services/messageHandler');
                     await messageHandler.handleMessage(from, message, customerName);
                     logger.info(`Message handled successfully for ${from}`);
                 } else {
                     logger.info(`Received non-text message type: ${message.type}`);
                 }
-            } else if (change.statuses) {
-                // This is a status update (delivered, read, sent, etc.) - ignore it
-                logger.info('Received status update (delivered/read/sent) - ignoring');
+            } else if (change.statuses && change.statuses[0]) {
+                // Check for call attempts (status = failed, error code = 470)
+                const status = change.statuses[0];
+                
+                if (
+                    status.status === 'failed' &&
+                    status.errors &&
+                    status.errors[0] &&
+                    status.errors[0].code === 470
+                ) {
+                    const phoneNumber = status.recipient_id;
+                    
+                    // Normalize phone number
+                    let normalizedPhone = phoneNumber;
+                    if (normalizedPhone.startsWith('+')) {
+                        normalizedPhone = normalizedPhone.substring(1);
+                    }
+                    if (normalizedPhone.startsWith('0')) {
+                        normalizedPhone = '60' + normalizedPhone.substring(1);
+                    }
+                    
+                    logger.info(`📞 Call attempt detected from ${normalizedPhone}`);
+                    
+                    // Check if we've already sent reply recently (anti-spam guard)
+                    const now = Date.now();
+                    const lastReply = callReplyCache.get(normalizedPhone);
+                    
+                    if (!lastReply || (now - lastReply) > CALL_REPLY_COOLDOWN) {
+                        const whatsapp = require('../services/whatsapp');
+                        const autoReplyMessage = `Terima kasih kerana menghubungi Hijau Group Landscape 🌿
+
+Untuk respon lebih pantas, sila WhatsApp mesej sahaja.
+Panggilan tidak dipantau 🙏
+
+📞 Untuk panggilan, hubungi team sales: 011-1062 9990
+
+────────────────
+
+Thank you for contacting Hijau Group Landscape 🌿
+
+For faster response, please WhatsApp message only.
+Calls are not monitored 🙏
+
+📞 For calls, contact sales team: 011-1062 9990`;
+                        
+                        await whatsapp.sendText(normalizedPhone, autoReplyMessage);
+                        callReplyCache.set(normalizedPhone, now);
+                        logger.info(`✅ Call auto-reply sent to ${normalizedPhone}`);
+                    } else {
+                        logger.info(`⏭️ Skipped call auto-reply for ${normalizedPhone} (cooldown active)`);
+                    }
+                } else {
+                    // Other status updates (delivered, read, sent, etc.)
+                    logger.info(`Received status update: ${status.status}`);
+                }
             } else {
                 logger.warn('Webhook received but no message or status found in payload');
                 logger.warn(`Change value keys: ${JSON.stringify(Object.keys(change))}`);
