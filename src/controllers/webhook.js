@@ -65,7 +65,25 @@ const handleWebhook = async (req, res) => {
                     logger.info(`Customer name from webhook: ${customerName}`);
                 }
 
-                if (message.type === 'text' || message.type === 'interactive') {
+                // Handle call events (missed calls)
+                if (message.type === 'call_log') {
+                    logger.info(`📞 Call detected from ${from} - Sending auto-reply`);
+                    const whatsapp = require('../services/whatsapp');
+                    const autoReplyMessage = `Terima kasih kerana menghubungi Hijau Group Landscape 🌿
+
+Untuk pertanyaan, sila WhatsApp mesej sahaja.
+Panggilan tidak dipantau. Terima kasih 🙏
+
+────────────────
+
+Thank you for contacting Hijau Group Landscape 🌿
+
+For inquiries, please WhatsApp message only.
+Calls are not monitored. Thank you 🙏`;
+                    
+                    await whatsapp.sendText(from, autoReplyMessage);
+                    logger.info(`✅ Auto-reply sent to ${from} for call`);
+                } else if (message.type === 'text' || message.type === 'interactive') {
                     const messageHandler = require('../services/messageHandler');
                     await messageHandler.handleMessage(from, message, customerName);
                     logger.info(`Message handled successfully for ${from}`);
