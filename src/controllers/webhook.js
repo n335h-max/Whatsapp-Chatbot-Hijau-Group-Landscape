@@ -117,19 +117,12 @@ const handleWebhook = async (req, res) => {
                         const whatsapp = require('../services/whatsapp');
                         const autoReplyMessage = `Terima kasih kerana menghubungi Hijau Group Landscape 🌿
 
-Untuk respon lebih pantas, sila WhatsApp mesej sahaja.
-Panggilan tidak dipantau 🙏
+Untuk respon yang lebih pantas, sila berhubung dengan Whatsapp mesej sahaja.
+Panggilan anda tidak akan dijawab. 🙏
 
 📞 Untuk panggilan, hubungi team sales: 011-1062 9990
 
-────────────────
-
-Thank you for contacting Hijau Group Landscape 🌿
-
-For faster response, please WhatsApp message only.
-Calls are not monitored 🙏
-
-📞 For calls, contact sales team: 011-1062 9990`;
+───────────────`;
                         
                         await whatsapp.sendText(normalizedPhone, autoReplyMessage);
                         callReplyCache.set(normalizedPhone, now);
