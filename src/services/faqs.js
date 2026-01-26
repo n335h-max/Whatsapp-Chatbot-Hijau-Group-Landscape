@@ -1,17 +1,10 @@
 const faqs = [
     {
         topic: 'location',
-        keywords_ms: ['lokasi', 'alamat', 'kat mana'],
-        keywords_en: ['location', 'address', 'where'],
-        answer_ms: "Kami beroperasi di Seremban 2, Negeri Sembilan.",
-        answer_en: "We are located at Seremban 2, Negeri Sembilan."
-    },
-    {
-        topic: 'cover_area',
-        keywords_ms: ['cover', 'kawasan', 'area'],
-        keywords_en: ['cover', 'area', 'coverage'],
-        answer_ms: "Negeri Sembilan , Lembah Klang (Kuala Lumpur, Putrajaya serta kawasan utama Selangor seperti Petaling Jaya, Shah Alam, Klang, Subang Jaya, Kajang dan sekitarnya) . Melaka ( Masjid tanah, Ayer Keroh & Simpang Ampat)",
-        answer_en: "We cover Negeri Sembilan, Klang Valley (Kuala Lumpur, Putrajaya, and major areas in Selangor like Petaling Jaya, Shah Alam, Klang, Subang Jaya, Kajang, and surrounding areas), and Melaka (Masjid Tanah, Ayer Keroh & Simpang Ampat)."
+        keywords_ms: ['lokasi', 'alamat', 'kat mana', 'cover', 'kawasan', 'area'],
+        keywords_en: ['location', 'address', 'where', 'cover', 'area', 'coverage'],
+        answer_ms: "Kami beroperasi di Seremban 2, Negeri Sembilan, dan meliputi kawasan Negeri Sembilan, Lembah Klang (Kuala Lumpur, Putrajaya serta kawasan utama Selangor seperti Petaling Jaya, Shah Alam, Klang, Subang Jaya, Kajang dan sekitarnya), serta Melaka (Masjid Tanah, Ayer Keroh dan Simpang Ampat).",
+        answer_en: "We are based in Seremban 2, Negeri Sembilan, and we serve Negeri Sembilan, the Klang Valley (including Kuala Lumpur, Putrajaya, and major areas in Selangor such as Petaling Jaya, Shah Alam, Klang, Subang Jaya, Kajang, and surrounding areas), as well as Melaka (Masjid Tanah, Ayer Keroh, and Simpang Ampat)."
     },
     {
         topic: 'services',
@@ -194,7 +187,8 @@ const findFaqByTopic = (topic) => {
     // Map topic names to FAQ topics
     const topicMap = {
         'location': 'location',
-        'coverage': 'cover_area',
+        'coverage': 'location',
+        'cover_area': 'location',
         'services': 'services',
         'design': 'design',
         'consultation': 'consultation',
