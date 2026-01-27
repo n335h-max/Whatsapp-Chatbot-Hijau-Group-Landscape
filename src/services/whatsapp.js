@@ -19,6 +19,11 @@ const sendMessage = async (to, data) => {
         });
         return response.data;
     } catch (error) {
+        if (error.response) {
+            console.error('FB API Error Data:', JSON.stringify(error.response.data, null, 2));
+        } else {
+            console.error('FB API Error Message:', error.message);
+        }
         logger.error('Error sending message:', error.response ? error.response.data : error.message);
         throw error;
     }

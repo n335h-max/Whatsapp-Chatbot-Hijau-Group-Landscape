@@ -23,6 +23,13 @@ const catalogs = {
         caption_ms: '🪨 Katalog Stepping Slabs - Hijau Group Landscape\n\nTerima kasih! Sila semak katalog kami untuk pelbagai corak stepping slabs.\n\nUntuk maklumat lanjut dan harga, hubungi Team Sales: 011-1062 9990',
         caption_en: '🪨 Stepping Slabs Catalog - Hijau Group Landscape\n\nThank you! Please check our catalog for various stepping slabs patterns.\n\nFor more info and pricing, contact Sales Team: 011-1062 9990'
     },
+    bohemian: {
+        type: 'document',
+        url: `${BASE_URL}/bohemian-wall.pdf`,
+        filename: 'Hijau_Group_Bohemian_Wall_Catalog.pdf',
+        caption_ms: '🧱 Katalog Bohemian Wall - Hijau Group Landscape\n\nTerima kasih! Sila semak katalog kami untuk pilihan Bohemian Wall.\n\nUntuk maklumat lanjut dan harga, hubungi Team Sales: 011-1062 9990',
+        caption_en: '🧱 Bohemian Wall Catalog - Hijau Group Landscape\n\nThank you! Please check our catalog for Bohemian Wall options.\n\nFor more info and pricing, contact Sales Team: 011-1062 9990'
+    },
     grass: {
         type: 'document',
         url: `${BASE_URL}/grass-catalog.pdf`,

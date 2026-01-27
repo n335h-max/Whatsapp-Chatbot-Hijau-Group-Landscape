@@ -97,6 +97,13 @@ const faqs = [
         answer_en: "Please refer to our stepping slabs catalog."
     },
     {
+        topic: 'bohemian',
+        keywords_ms: ['bohemian', 'wall', 'dinding'],
+        keywords_en: ['bohemian', 'wall'],
+        answer_ms: "Sila rujuk katalog Bohemian Wall kami.",
+        answer_en: "Please refer to our Bohemian Wall catalog."
+    },
+    {
         topic: 'wood_work',
         keywords_ms: ['kayu'],
         keywords_en: ['wood', 'decking', 'fence'],
